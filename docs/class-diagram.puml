@@ -1,0 +1,74 @@
+@startuml
+
+' Class definitions
+class Event {
+    - eventName: String
+    - participationFee: double
+    - categories: List<Category>
+    - participants: List<Participant>
+    - isFinalized: boolean
+    - isDraft: boolean
+    + addParticipant()
+    + removeParticipant()
+    + calculateBalances()
+    + applyParticipationFees()
+}
+
+class Participant {
+    - name: String
+    - expenses: Map<Category, Double>
+    - consumedCategories: List<Category>
+    + addExpense()
+    + consumeCategory()
+    + editExpense()
+}
+
+class Category {
+    - categoryName: String
+}
+
+class EventManager {
+    - events: List<Event>
+    - currentEvent: Event
+    + createEvent()
+    + editEvent()
+    + loadEvent()
+    + saveEvent()
+    + switchEvent()
+}
+
+class CalculationEngine {
+    + calculateBalances(event: Event)
+    + minimizeTransfers()
+}
+
+class StorageManager {
+    + saveEventToFile(event: Event)
+    + loadEventFromFile(file: String)
+}
+
+class UserInterface {
+    + startMenu()
+    + promptEventData()
+    + showResult()
+}
+
+' === Relationships ===
+
+' Composition: Event owns Participants and Categories
+Event *-- Participant
+Event *-- Category
+
+' Aggregation: EventManager manages Events (but events can exist independently)
+EventManager o-- Event
+
+' Dependency: CalculationEngine uses Event but doesn't own it
+CalculationEngine ..> Event
+
+' Dependency: StorageManager depends on Event
+StorageManager ..> Event
+
+' Dependency: UserInterface uses Event data
+UserInterface ..> Event
+
+@enduml
