@@ -1,0 +1,30 @@
+@startuml
+title Activity Diagram - Calculate Balances and Show Results
+
+start
+
+:User triggers "Calculate Balances";
+
+:EventManager retrieves current Event;
+
+:CalculationEngine receives Event;
+
+:CalculationEngine processes participant expenses;
+
+:CalculationEngine calculates individual balances;
+
+:CalculationEngine applies participation fees (if applicable);
+
+:CalculationEngine minimizes transfers between participants;
+
+:CalculationEngine returns calculated results;
+
+:Event is updated with calculated balances;
+
+:UserInterface receives calculated results;
+
+:UserInterface displays results (debts and summary);
+
+stop
+
+@enduml

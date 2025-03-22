@@ -1,0 +1,31 @@
+@startuml
+title Activity Diagram - Show Result to User
+
+start
+
+:User selects "Show Result";
+
+:EventManager sends current Event to CalculationEngine;
+
+:CalculationEngine calculates balances;
+
+if (Minimize transfers?) then (yes)
+    :CalculationEngine minimizes transfers;
+endif
+
+:CalculationEngine returns result summary;
+
+:UserInterface receives result;
+
+:UserInterface formats result (table/text);
+
+:UserInterface displays result on screen;
+
+if (Export to file?) then (yes)
+    :User selects export format;
+    :Export result to file (CSV/JSON);
+endif
+
+stop
+
+@enduml

@@ -1,0 +1,19 @@
+@startuml
+actor User
+
+participant "UserInterface" as UI
+participant "EventManager" as EM
+participant "Event" as Event
+participant "Participant" as Participant
+
+== Add Participant Flow ==
+
+User -> UI : select "Add Participant"\nprovide participant details
+UI -> EM : addParticipant(details)
+EM -> Event : addParticipant(details)
+Event -> Participant : create new Participant(details)
+Event <-- Participant : return new Participant object
+Event --> EM : participant added
+EM --> UI : show confirmation
+
+@enduml

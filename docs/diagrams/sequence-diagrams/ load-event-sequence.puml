@@ -1,0 +1,22 @@
+@startuml
+actor User
+
+participant "UserInterface" as UI
+participant "EventManager" as EM
+participant "StorageManager" as SM
+participant "Event" as Event
+
+== Load Event from File Flow ==
+
+User -> UI : click "Load Event"
+UI -> EM : loadEvent()
+EM -> UI : prompt file selection
+User -> UI : select file
+UI -> SM : loadEventFromFile(filePath)
+SM -> SM : read file from disk
+SM -> SM : parse file and reconstruct Event
+SM --> EM : return Event object
+EM -> EM : set currentEvent(event)
+EM --> UI : notify user
+
+@enduml

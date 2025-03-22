@@ -1,0 +1,20 @@
+@startuml
+actor User
+
+participant "UserInterface" as UI
+participant "EventManager" as EM
+participant "Event" as Event
+participant "StorageManager" as SM
+
+== Save Event to File Flow ==
+
+User -> UI : click "Save Event"
+UI -> EM : saveEvent()
+EM -> Event : get current Event data
+EM -> SM : saveEventToFile(event)
+SM -> Event : serialize to JSON/XML
+SM -> SM : write file to disk
+SM --> EM : confirmation
+EM --> UI : notify user
+
+@enduml

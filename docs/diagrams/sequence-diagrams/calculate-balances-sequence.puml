@@ -1,0 +1,19 @@
+@startuml
+actor User
+
+participant "UserInterface" as UI
+participant "EventManager" as EM
+participant "Event" as Event
+participant "CalculationEngine" as CE
+
+== Calculate Balances Flow ==
+
+User -> UI : select "Calculate Balances"
+UI -> EM : calculateBalances()
+EM -> Event : get current Event data
+EM -> CE : calculateBalances(event)
+CE -> Event : retrieve participants and expenses
+CE --> EM : return balance summary
+EM --> UI : display balance results
+
+@enduml

@@ -1,0 +1,21 @@
+@startuml
+|User|
+start
+
+:Prompt for event data;
+:Enter event name, fee, categories;
+|System|
+:Create Event object;
+
+:Prompt to add participants;
+repeat
+  |User|
+  :Enter participant name;
+  |System|
+  :Create Participant object;
+  :Add participant to event;
+repeat while (More participants?) is (yes)
+:Confirm event creation;
+
+stop
+@enduml
