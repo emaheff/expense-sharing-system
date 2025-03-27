@@ -1,21 +1,210 @@
 package ui;
 
-import logic.Event;
-import logic.EventManager;
-import logic.Debt;
+import logic.*;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class UserInterface {
 
     private EventManager eventManager;
+    private boolean isRunning = true;
+    private Scanner scanner;
 
+    public UserInterface(EventManager eventManager) {
+        this.eventManager = eventManager;
+        this.scanner = new Scanner(System.in);
+    }
+
+    // Entry point of the program's UI
     public void start() {
-        // Entry point of the program's UI
+        while (isRunning) {
+            displayMainMenu();
+            int choice = readUserChoice();
+            handleMainMenuChoice(choice);
+        }
     }
 
-    public void displayMainMenu() {
-        // Show main options to the user
+    private void displayMainMenu() {
+        System.out.println("\n=== Expense Sharing System ===");
+        System.out.println("Please choose an option:");
+        System.out.println("1. Create new event");
+        System.out.println("2. Load existing event");
+        System.out.println("3. Exit");
     }
+
+    private int readUserChoice() {
+        System.out.print("Your choice: ");
+        while (!scanner.hasNextInt()) {
+            System.out.print("Please enter a valid number: ");
+            scanner.next(); // Skip invalid input
+        }
+        return scanner.nextInt();
+    }
+
+    private void handleMainMenuChoice(int choice) {
+        switch (choice) {
+            case 1:
+                System.out.println("Creating new event...");
+                createEvent();
+                break;
+            case 2:
+                System.out.println("Loading existing event..."); // Will call loadEventFlow()
+                break;
+            case 3:
+                System.out.println("Exiting. Goodbye!");
+                isRunning = false;
+                break;
+            default:
+                System.out.println("Invalid option. Please try again.");
+        }
+    }
+
+    public void createEvent() {
+        System.out.println("=== Create New Event ===");
+
+        System.out.print("Enter event name: ");
+        String name = scanner.nextLine();
+
+        System.out.print("Enter participation fee: ");
+        double fee = Double.parseDouble(scanner.nextLine());
+
+        System.out.print("Is this a draft? (yes/no): ");
+        String draftInput = scanner.nextLine();
+        boolean isDraft = draftInput.equalsIgnoreCase("yes");
+
+
+
+        Event newEvent = new Event(name, fee, isDraft);
+
+        defineCategories(newEvent); // Define consumed/expenses categories for this new event
+        eventManager.createEvent(newEvent);
+
+        System.out.println("Event '" + name + "' created successfully.");
+
+        addParticipants(newEvent);
+
+    }
+
+    private void defineCategories(Event newEvent) {
+        boolean isMoreCategory = true;
+
+        System.out.println("Enter Consumed Categories for this Event");
+        while (isMoreCategory) {
+            System.out.println("Enter Category Name:");
+            String categoryName = scanner.nextLine();
+            newEvent.addCategory(new Category(categoryName));
+            System.out.println("Do You Want To Add Category? (Y/N)");
+            String userAnswer = scanner.nextLine();
+            if (!userAnswer.equalsIgnoreCase("Y")) {
+                isMoreCategory = false;
+            }
+        }
+    }
+
+    private void addParticipants(Event newEvent) {
+        boolean isMoreParticipant = true;
+        System.out.println(" === Adds Participants to Event ===");
+        while (isMoreParticipant) {
+            System.out.println("Enter Participant Name:");
+            String name = scanner.nextLine();
+            Participant participant = new Participant(name);
+            // ask the user to enter the categories that need to add to the participant expenses
+            enterExpensesCategories(participant, newEvent.getCategories());
+            enterConsumedCategories(participant, newEvent.getCategories());
+
+            // adds the participant to the event
+            newEvent.addParticipant(participant);
+
+            // ask the user if there are more participants that the user want to add
+            System.out.println("Do you want to add more participant? (Y/N)");
+            String userAnswer = scanner.nextLine();
+            if (!userAnswer.equalsIgnoreCase("Y"))
+                isMoreParticipant = false;
+        }
+    }
+
+    private void enterExpensesCategories(Participant participant, List<Category> categories) {
+        boolean isMoreCategory = true;
+        // copy the categories list, so I can change it without effect the original list
+        List<Category> displayCategories = new ArrayList<>(categories);
+        System.out.println("Enter Categories that " + participant.getName() +" Expense Money on");
+
+        while (isMoreCategory) {
+            // ask from the user to choose category that the participant spent on
+            System.out.println("Enter Category Number The Participant Spent Money On From These Categories:" +
+                    " if there are none enter 0");
+            System.out.println(displayNumberedCategories(displayCategories));
+
+            // get user answer and create new category
+            int userNumber = Integer.parseInt(scanner.nextLine());
+            if (userNumber == 0)
+                break;
+            Category expenseCategory = getCategoryFromNumber(userNumber, displayCategories);
+
+            // get the amount that the participant spent on the category
+            System.out.println("Enter the amount of money you spent on this category.");
+            double amount = Double.parseDouble(scanner.nextLine());
+
+            // adds the expense to the participant expenses list
+            participant.addExpense(expenseCategory, amount);
+
+            // ask the user if there are more categories that the participant spent money on
+            System.out.println("Is there are more categories that the participant spent money on (Y/N)");
+            String userAnswer = scanner.nextLine();
+            if (!userAnswer.equalsIgnoreCase("Y"))
+                isMoreCategory = false;
+
+        }
+
+    }
+
+    private void enterConsumedCategories(Participant participant, List<Category> categories) {
+        boolean isMoreCategory = true;
+        // copy the categories list, so I can change it without effect the original list
+        List<Category> displayCategories = new ArrayList<>(categories);
+        System.out.println("Enter Categories that " + participant.getName() +" Consumed");
+
+        while (isMoreCategory) {
+            // ask from the user to choose category that the participant consumed
+            System.out.println("Enter Category Number The Participant Consumed From These Categories:" +
+                    "if there are none enter 0");
+            System.out.println(displayNumberedCategories(displayCategories));
+
+            // get user answer and create new category
+            int userNumber = Integer.parseInt(scanner.nextLine());
+            if (userNumber == 0)
+                break;
+            Category consumedCategory = getCategoryFromNumber(userNumber, displayCategories);
+
+            // adds the category to the consumed list of the participant
+            participant.addConsumedCategory(consumedCategory);
+
+            // ask the user if there are more categories that the participant consumed
+            System.out.println("Is there are more categories that the participant consumed (Y/N)");
+            String userAnswer = scanner.nextLine();
+            if (!userAnswer.equalsIgnoreCase("Y"))
+                isMoreCategory = false;
+        }
+    }
+
+    private String displayNumberedCategories(List<Category> categories) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 1; i <= categories.size(); i++) {
+            result.append(i).append(". ").append(categories.get(i).getName()).append("\n");
+        }
+        return result.toString();
+    }
+
+    private Category getCategoryFromNumber(int userNumber, List<Category> displayedCategories) {
+        Category result = displayedCategories.get(userNumber - 1);
+        displayedCategories.remove(userNumber -1);
+        return result;
+    }
+
+
 
     public void displayEventSummary(Event event) {
         // Show details of the current event
@@ -25,8 +214,9 @@ public class UserInterface {
         // Display who owes whom and how much
     }
 
+    // Prompt user for event details and create new event
     public void collectEventData() {
-        // Prompt user for event details and create new event
+
     }
 
     public void collectParticipantData() {

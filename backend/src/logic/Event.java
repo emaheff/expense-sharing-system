@@ -1,19 +1,36 @@
 package logic;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Event {
     private String eventName;
-    private double participantFee;
+    private double participationFee;
     private List<Category> categories;
     private List<Participant> participants;
     private boolean isFinalized;
     private boolean isDraft;
 
+    public Event(String name, double participationFee, boolean isDraft) {
+        this.eventName = name;
+        this.participationFee = participationFee;
+        this.isDraft = isDraft;
+        this.isFinalized = false;
+        this.categories = new ArrayList<>();
+        this.participants = new ArrayList<>();
+    }
+
+
     // adds new participant to participants list
-    public void addParticipant(Participant participant) {}
+    public void addParticipant(Participant participant) {
+        participants.add(participant);
+    }
 
     // removes a participant from participants list
     public void removeParticipant(Participant participant) {}
+
+    public void addCategory(Category category) {
+        categories.add(category);
+    }
 
     //
     public List<Debt> calculateBalances() {

@@ -7,7 +7,10 @@ public class EventManager {
     private List<Event> events;
     private Event currentEvent;
 
-    public void createEvent() {}
+    public void createEvent(Event event) {
+        events.add(event);
+        currentEvent = event;
+    }
 
     public void editEvent(Event event) {}
 

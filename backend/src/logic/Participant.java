@@ -15,9 +15,19 @@ public class Participant {
         this.consumedCategories = new ArrayList<>();
     }
 
-    public void addExpense(Category category, Double amount) {}
+    public void addExpense(Category category, Double amount) {
+        expenses.put(category, amount);
+    }
+
+    public void addConsumedCategory(Category category) {
+        consumedCategories.add(category);
+    }
 
     public void consumedCategory(Category category) {}
 
     public void editExpense(Category category, Double newAmount) {}
+
+    public String getName() {
+        return name;
+    }
 }
