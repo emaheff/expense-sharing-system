@@ -4,15 +4,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Participant {
+public class Participant implements Comparable<Participant> {
     private String name;
     private Map<Category, Double> expenses;
     private List<Category> consumedCategories;
+    private double balance;
 
     public Participant(String name) {
         this.name = name;
         this.expenses = new HashMap<>();
         this.consumedCategories = new ArrayList<>();
+        this.balance = 0.0;
     }
 
     public void addExpense(Category category, Double amount) {
@@ -30,4 +32,35 @@ public class Participant {
     public String getName() {
         return name;
     }
+
+    public Map<Category, Double> getExpenses() {
+        return expenses;
+    }
+
+    public List<Category> getConsumedCategories() {
+        return consumedCategories;
+    }
+
+    public double getTotalExpense() {
+        double totalExpense = 0.0;
+        for (Double expense: expenses.values()) {
+            totalExpense += expense;
+        }
+        return totalExpense;
+    }
+
+    public void setBalance(double balance) {
+        this.balance = balance;
+    }
+
+    public double getBalance() {
+        return balance;
+    }
+
+    @Override
+    public int compareTo(Participant other) {
+        return Double.compare(this.balance, other.balance);
+    }
+
+
 }

@@ -22,6 +22,7 @@ public class UserInterface {
         while (isRunning) {
             displayMainMenu();
             int choice = readUserChoice();
+            scanner.nextLine();
             handleMainMenuChoice(choice);
         }
     }
@@ -31,7 +32,8 @@ public class UserInterface {
         System.out.println("Please choose an option:");
         System.out.println("1. Create new event");
         System.out.println("2. Load existing event");
-        System.out.println("3. Exit");
+        System.out.println("3. Show event results");
+        System.out.println("4. Exit");
     }
 
     private int readUserChoice() {
@@ -53,6 +55,9 @@ public class UserInterface {
                 System.out.println("Loading existing event..."); // Will call loadEventFlow()
                 break;
             case 3:
+                showResultsForCurrentEvent();
+                break;
+            case 4:
                 System.out.println("Exiting. Goodbye!");
                 isRunning = false;
                 break;
@@ -64,11 +69,20 @@ public class UserInterface {
     public void createEvent() {
         System.out.println("=== Create New Event ===");
 
-        System.out.print("Enter event name: ");
+        System.out.println("Enter event name: ");
         String name = scanner.nextLine();
 
-        System.out.print("Enter participation fee: ");
-        double fee = Double.parseDouble(scanner.nextLine());
+        double fee = 0;
+        while (true) {
+            System.out.println("Enter participation fee: ");
+            String feeInput = scanner.nextLine();
+            try {
+                fee = Double.parseDouble(feeInput);
+                break;
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid number. Please enter a valid participation fee.");
+            }
+        }
 
         System.out.print("Is this a draft? (yes/no): ");
         String draftInput = scanner.nextLine();
@@ -193,7 +207,7 @@ public class UserInterface {
         StringBuilder result = new StringBuilder();
 
         for (int i = 1; i <= categories.size(); i++) {
-            result.append(i).append(". ").append(categories.get(i).getName()).append("\n");
+            result.append(i).append(". ").append(categories.get(i - 1).getName()).append("\n");
         }
         return result.toString();
     }
@@ -203,6 +217,35 @@ public class UserInterface {
         displayedCategories.remove(userNumber -1);
         return result;
     }
+
+    public void showResultsForCurrentEvent() {
+        Event currentEvent = eventManager.getCurrentEvent();
+
+        if (currentEvent == null) {
+            System.out.println("No active event selected.");
+            return;
+        }
+
+        System.out.println("=== Event Results: " + currentEvent.getEventName() + " ===");
+
+        CalculationEngine calculationEngine = new CalculationEngine();
+        List<Debt> debts = calculationEngine.calculateBalances(currentEvent);
+
+        if (debts.isEmpty()) {
+            System.out.println("All participants are settled up. No debts to display.");
+        } else {
+            for (Debt debt : debts) {
+                String from = debt.getFrom().getName();
+                String to = debt.getTo().getName();
+                double amount = debt.getAmount();
+
+                System.out.printf("%s owes %s: %.2f\n", from, to, amount);
+            }
+        }
+
+        System.out.println("=============================");
+    }
+
 
 
 
