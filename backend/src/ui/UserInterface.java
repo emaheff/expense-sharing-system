@@ -98,6 +98,8 @@ public class UserInterface {
         System.out.println("Event '" + name + "' created successfully.");
 
         addParticipants(newEvent);
+        newEvent.setConsumedPerCategory();
+        newEvent.setExpensePerCategory();
 
     }
 
@@ -163,6 +165,8 @@ public class UserInterface {
 
             // adds the expense to the participant expenses list
             participant.addExpense(expenseCategory, amount);
+
+
 
             // ask the user if there are more categories that the participant spent money on
             System.out.println("Is there are more categories that the participant spent money on (Y/N)");

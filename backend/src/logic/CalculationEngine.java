@@ -14,7 +14,7 @@ public class CalculationEngine {
         // Step 3: Calculate total expenses and total consumption per participant
         Map<Participant, Double> totalExpenseByParticipant = calculateTotalExpensesByParticipant(event);
         Map<Participant, Double> totalConsumedByParticipant =
-                calculateTotalConsumedByParticipant(event, totalExpensesPerCategory, consumerPerCategory);
+                calculateTotalConsumedByParticipant(event);
 
         // Step 4: Determine creditors and debtors based on net balances
         List<Participant> creditors = new ArrayList<>();
@@ -22,36 +22,24 @@ public class CalculationEngine {
         calculateNetBalances(totalExpenseByParticipant, totalConsumedByParticipant, creditors, debtors);
 
         // Step 5: Generate final list of debts
-        return generateDebts(creditors, debtors);
+        event.setDebts(generateDebts(creditors, debtors));
+        return event.getDebts();
     }
 
 
     private Map<Category, Double> calculateTotalExpensesPerCategory(Event event) {
         Map<Category, Double> totalExpensesPerCategory = new HashMap<>();
-        for (Participant participant: event.getParticipants()) {
-            // for each participant iterate over all the category that the participant spent on and sum it on
-            // totalExpensesPerCategory map per key
-            for (Category category: participant.getExpenses().keySet()) {
-                double valueFromParticipantMap = participant.getExpenses().get(category);
-                double currentValueInTotalExpensesPerCategory = totalExpensesPerCategory.getOrDefault(category,0.0);
-                totalExpensesPerCategory.put(category,currentValueInTotalExpensesPerCategory + valueFromParticipantMap);
-            }
+        for (Category category: event.getCategories()) {
+            totalExpensesPerCategory.put(category, category.getTotalExpense());
         }
         return totalExpensesPerCategory;
     }
 
     private Map<Category, List<Participant>> mapConsumersPerCategory(Event event) {
         Map<Category, List<Participant>> consumerPerCategory = new HashMap<>();
-        for (Category category: event.getCategories()) {
-            List<Participant> categoryConsumedParticipants = new ArrayList<>();
-            for (Participant participant: event.getParticipants()) {
-                for (Category consumedCategory: participant.getConsumedCategories()) {
-                    if (category.equals(consumedCategory)) {
-                        categoryConsumedParticipants.add(participant);
-                    }
-                }
-            }
-            consumerPerCategory.put(category, categoryConsumedParticipants);
+
+        for (Category  category: event.getCategories()) {
+            consumerPerCategory.put(category, category.getConsumedParticipants());
         }
         return consumerPerCategory;
     }
@@ -64,23 +52,13 @@ public class CalculationEngine {
         return totalExpenseByParticipant;
     }
 
-    private Map<Participant, Double> calculateTotalConsumedByParticipant(
-            Event event,
-            Map<Category, Double> totalExpensesPerCategory,
-            Map<Category, List<Participant>> consumerPerCategory
-    ) {
+    private Map<Participant, Double> calculateTotalConsumedByParticipant(Event event) {
         Map<Participant, Double> totalConsumedByParticipant = new HashMap<>();
 
         for (Category category : event.getCategories()) {
-            double totalSpent = totalExpensesPerCategory.getOrDefault(category, 0.0);
-            List<Participant> consumers = consumerPerCategory.getOrDefault(category, new ArrayList<>());
+            double perParticipantCost = category.getExpensePerParticipant();
 
-            int numConsumers = consumers.size();
-            if (numConsumers == 0) continue;
-
-            double perParticipantCost = totalSpent / numConsumers;
-
-            for (Participant participant : consumers) {
+            for (Participant participant : category.getConsumedParticipants()) {
                 double currentTotal = totalConsumedByParticipant.getOrDefault(participant, 0.0);
                 totalConsumedByParticipant.put(participant, currentTotal + perParticipantCost);
             }

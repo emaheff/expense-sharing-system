@@ -23,4 +23,8 @@ public class Debt {
     public double getAmount() {
         return amount;
     }
+
+    public String toString() {
+        return String.format("%s owes %f to %s", from.getName(), amount, to.getName()) ;
+    }
 }
