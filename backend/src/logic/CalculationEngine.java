@@ -4,44 +4,20 @@ import java.util.*;
 
 public class CalculationEngine {
 
-    public List<Debt> calculateBalances(Event event) {
-        // Step 1: Calculate total expenses per category
-        Map<Category, Double> totalExpensesPerCategory = calculateTotalExpensesPerCategory(event);
+    public void calculateBalances(Event event) {
 
-        // Step 2: Map consumers per category
-        Map<Category, List<Participant>> consumerPerCategory = mapConsumersPerCategory(event);
-
-        // Step 3: Calculate total expenses and total consumption per participant
+        // Step 1: Calculate total expenses and total consumption per participant
         Map<Participant, Double> totalExpenseByParticipant = calculateTotalExpensesByParticipant(event);
         Map<Participant, Double> totalConsumedByParticipant =
                 calculateTotalConsumedByParticipant(event);
 
-        // Step 4: Determine creditors and debtors based on net balances
+        // Step 2: Determine creditors and debtors based on net balances
         List<Participant> creditors = new ArrayList<>();
         List<Participant> debtors = new ArrayList<>();
         calculateNetBalances(totalExpenseByParticipant, totalConsumedByParticipant, creditors, debtors);
 
-        // Step 5: Generate final list of debts
+        // Step 3: Generate final list of debts
         event.setDebts(generateDebts(creditors, debtors));
-        return event.getDebts();
-    }
-
-
-    private Map<Category, Double> calculateTotalExpensesPerCategory(Event event) {
-        Map<Category, Double> totalExpensesPerCategory = new HashMap<>();
-        for (Category category: event.getCategories()) {
-            totalExpensesPerCategory.put(category, category.getTotalExpense());
-        }
-        return totalExpensesPerCategory;
-    }
-
-    private Map<Category, List<Participant>> mapConsumersPerCategory(Event event) {
-        Map<Category, List<Participant>> consumerPerCategory = new HashMap<>();
-
-        for (Category  category: event.getCategories()) {
-            consumerPerCategory.put(category, category.getConsumedParticipants());
-        }
-        return consumerPerCategory;
     }
 
     private Map<Participant, Double> calculateTotalExpensesByParticipant(Event event) {
@@ -118,11 +94,6 @@ public class CalculationEngine {
         }
 
         return debts;
-    }
-
-
-    public void applyParticipationFees(Event event) {
-        // splits the participant fee between all categories
     }
 
     public List<Debt> minimizeTransfers(List<Debt> debts) {

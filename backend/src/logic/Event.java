@@ -1,6 +1,8 @@
 package logic;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Event {
     private String eventName;
@@ -8,6 +10,8 @@ public class Event {
     private List<Category> categories;
     private List<Participant> participants;
     private List<Debt> debts;
+    private Map<Category, Double> expensePerCategory;
+    private Map<Category, List<Participant>> consumedPerCategory;
     private boolean isFinalized;
     private boolean isDraft;
 
@@ -19,6 +23,8 @@ public class Event {
         this.categories = new ArrayList<>();
         this.participants = new ArrayList<>();
         this.debts = new ArrayList<>();
+        this.expensePerCategory = new HashMap<>();
+        this.consumedPerCategory = new HashMap<>();
     }
 
 
@@ -70,18 +76,41 @@ public class Event {
         return debts;
     }
 
+    public double getParticipationFee() {
+        return participationFee;
+    }
+
+    public Category getCategoryByName(String categoryName) {
+        for (Category category : categories) {
+            if (category.getName().equalsIgnoreCase(categoryName)) {
+                return category;
+            }
+        }
+        return null;
+    }
+
+
+
+
     public String toString() {
         return String.format("""
+                === Event Summary ===
                 Event name: %s
-                Participation fee: %f
-                Categories: %s
-                Participants: %s
-                Debts: %s""", eventName, participationFee, categoriesToString(), participantsToString(), debtsToString());
+                Participation Fee: %f
+                
+                --- Categories and Total Expenses ---
+                %s
+                
+                --- Participants: Expense and Consumption ---
+                %s
+                
+                --- Debts ---
+                %s""", eventName, participationFee, categoriesAndTotalExpensesToString(), participantsExpensesAndConsumptionToString(), debtsToString());
     }
 
 
     // this method set for each category in this event all the participant that consumed a category
-    public void setConsumedPerCategory() {
+    public void setParticipantsConsumedPerCategory() {
         // iterate throw all the categories in this event
         for (Category category: categories) {
             // for each category, iterate throw all participants in this event
@@ -96,9 +125,10 @@ public class Event {
                 }
             }
         }
+        fillConsumedPerCategory();
     }
 
-    public void setExpensePerCategory() {
+    public void setParticipantsExpensePerCategory() {
         for (Category category: categories) {
             for (Participant participant: participants) {
                 for (Category expenseCategory: participant.getExpenses().keySet()) {
@@ -108,33 +138,59 @@ public class Event {
                 }
             }
         }
+        fillExpensePerCategoryMap();
     }
 
-    private String categoriesToString() {
-        if (categories.isEmpty()) {
-            return "There is no categories in this event";
-        }
+    public void setExpensePerCategory(Map<Category, Double> expenseMap) {
+        this.expensePerCategory = expenseMap;
+    }
 
-        StringBuilder result = new StringBuilder(String.format("{%s", categories.get(0).getName()));
-
-        for (int i = 1; i < categories.size(); i++) {
-            result.append(", ").append(categories.get(i).getName());
+    private void fillExpensePerCategoryMap() {
+        for (Category category: categories) {
+            if (category.getName().equalsIgnoreCase("ParticipationFee")) {
+                expensePerCategory.put(category, participationFee * participants.size());
+            } else {
+                expensePerCategory.put(category, category.getTotalExpense());
+            }
         }
-        result.append("}");
+    }
+
+    private void fillConsumedPerCategory() {
+        for (Category category: categories) {
+            consumedPerCategory.put(category, category.getConsumedParticipants());
+        }
+    }
+
+
+    private String categoriesAndTotalExpensesToString() {
+        StringBuilder result = new StringBuilder();
+
+        for (Category category: categories) {
+            result.append(category.getName()).append(": ").append(category.getTotalExpense()).append("\n");
+        }
         return result.toString();
     }
 
-    private String participantsToString() {
-        if (participants.isEmpty()) {
-            return "There is no participants in this event";
+    private String participantsExpensesAndConsumptionToString() {
+        StringBuilder result = new StringBuilder();
+        for (Participant participant: participants) {
+            result.append(participant.getName()).append("\n\t").append(" - Expenses:\n\t\t");
+            for (Category expenseCategory: participant.getExpenses().keySet()) {
+                result.append(expenseCategory.getName()).append(": ").append(participant.getExpenses().get(expenseCategory)).append(", ");
+            }
+            result.append("\n\t- Consumed:\n\t\t");
+            for (Category consumedCategory: participant.getConsumedCategories()) {
+                result.append(consumedCategory.getName()).append(", ");
+            }
+            double totalConsumed = 0.0;
+            for (Category totalCategory: expensePerCategory.keySet()) {
+                if (participant.getConsumedCategories().contains(totalCategory)) {
+                    totalConsumed += expensePerCategory.get(totalCategory);
+                }
+            }
+            result.append("\n\t- Total Paid: ").append(participant.getTotalExpense())
+                    .append("\n\t- Total Consumed: ").append(totalConsumed).append("\n\n");
         }
-
-        StringBuilder result = new StringBuilder(String.format("{%s", participants.get(0).getName()));
-
-        for (int i = 1; i < participants.size(); i++) {
-            result.append(", ").append(participants.get(i).getName());
-        }
-        result.append("}");
         return result.toString();
     }
 
@@ -143,10 +199,10 @@ public class Event {
             return "No one owes money to no one";
         }
 
-        StringBuilder result = new StringBuilder(String.format("{%s", debts.get(0)));
+        StringBuilder result = new StringBuilder(String.format("%s", debts.get(0)));
 
         for (int i = 1; i < debts.size(); i++) {
-            result.append(", ").append((debts.get(i)));
+            result.append("\n").append((debts.get(i)));
         }
 
         result.append("}");

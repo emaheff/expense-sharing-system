@@ -98,8 +98,9 @@ public class UserInterface {
         System.out.println("Event '" + name + "' created successfully.");
 
         addParticipants(newEvent);
-        newEvent.setConsumedPerCategory();
-        newEvent.setExpensePerCategory();
+
+        newEvent.setParticipantsConsumedPerCategory();
+        newEvent.setParticipantsExpensePerCategory();
 
     }
 
@@ -184,7 +185,11 @@ public class UserInterface {
         List<Category> displayCategories = new ArrayList<>(categories);
         System.out.println("Enter Categories that " + participant.getName() +" Consumed");
 
-        while (isMoreCategory) {
+        // add participation fee category for each participant as a consumed category
+        Category participationFee = new Category("ParticipationFee");
+        participant.addConsumedCategory(participationFee);
+
+        while (isMoreCategory || !displayCategories.isEmpty()) {
             // ask from the user to choose category that the participant consumed
             System.out.println("Enter Category Number The Participant Consumed From These Categories:" +
                     "if there are none enter 0");
@@ -233,20 +238,8 @@ public class UserInterface {
         System.out.println("=== Event Results: " + currentEvent.getEventName() + " ===");
 
         CalculationEngine calculationEngine = new CalculationEngine();
-        List<Debt> debts = calculationEngine.calculateBalances(currentEvent);
-
-        if (debts.isEmpty()) {
-            System.out.println("All participants are settled up. No debts to display.");
-        } else {
-            for (Debt debt : debts) {
-                String from = debt.getFrom().getName();
-                String to = debt.getTo().getName();
-                double amount = debt.getAmount();
-
-                System.out.printf("%s owes %s: %.2f\n", from, to, amount);
-            }
-        }
-
+        calculationEngine.calculateBalances(currentEvent);
+        System.out.println(currentEvent);
         System.out.println("=============================");
     }
 
