@@ -29,19 +29,25 @@ public class CalculationEngine {
     }
 
     private Map<Participant, Double> calculateTotalConsumedByParticipant(Event event) {
-        Map<Participant, Double> totalConsumedByParticipant = new HashMap<>();
+        Map<Participant, Double> totalConsumed = new HashMap<>();
 
         for (Category category : event.getCategories()) {
-            double perParticipantCost = category.getExpensePerParticipant();
+            List<Participant> consumers = event.getConsumedPerCategory().get(category);
+            Double totalExpense = event.getTotalExpensePerCategory().get(category);
 
-            for (Participant participant : category.getConsumedParticipants()) {
-                double currentTotal = totalConsumedByParticipant.getOrDefault(participant, 0.0);
-                totalConsumedByParticipant.put(participant, currentTotal + perParticipantCost);
+            if (consumers != null && !consumers.isEmpty() && totalExpense != null) {
+                double sharePerParticipant = totalExpense / consumers.size();
+
+                for (Participant participant : consumers) {
+                    totalConsumed.put(participant,
+                            totalConsumed.getOrDefault(participant, 0.0) + sharePerParticipant);
+                }
             }
         }
 
-        return totalConsumedByParticipant;
+        return totalConsumed;
     }
+
 
     private void calculateNetBalances(
             Map<Participant, Double> totalExpensesByParticipant,

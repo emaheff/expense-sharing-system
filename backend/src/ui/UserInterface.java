@@ -1,6 +1,7 @@
 package ui;
 
 import logic.*;
+import storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,8 +33,9 @@ public class UserInterface {
         System.out.println("Please choose an option:");
         System.out.println("1. Create new event");
         System.out.println("2. Load existing event");
-        System.out.println("3. Show event results");
-        System.out.println("4. Exit");
+        System.out.println("3. Save current event");
+        System.out.println("4. Show event results");
+        System.out.println("5. Exit");
     }
 
     private int readUserChoice() {
@@ -52,12 +54,16 @@ public class UserInterface {
                 createEvent();
                 break;
             case 2:
-                System.out.println("Loading existing event..."); // Will call loadEventFlow()
+                System.out.println("Loading existing event...");
+                loadEventFlow();
                 break;
             case 3:
-                showResultsForCurrentEvent();
+                saveCurrentEvent();
                 break;
             case 4:
+                showResultsForCurrentEvent();
+                break;
+            case 5:
                 System.out.println("Exiting. Goodbye!");
                 isRunning = false;
                 break;
@@ -99,8 +105,9 @@ public class UserInterface {
 
         addParticipants(newEvent);
 
-        newEvent.setParticipantsConsumedPerCategory();
-        newEvent.setParticipantsExpensePerCategory();
+        newEvent.fillConsumedPerCategory();
+        newEvent.fillExpensePerCategory();
+        newEvent.fillTotalExpensePerCategory();
 
     }
 
@@ -117,6 +124,25 @@ public class UserInterface {
             if (!userAnswer.equalsIgnoreCase("Y")) {
                 isMoreCategory = false;
             }
+        }
+    }
+
+    private void saveCurrentEvent() {
+        Event currentEvent = eventManager.getCurrentEvent();
+        if (currentEvent == null) {
+            System.out.println("No event selected to save.");
+            return;
+        }
+
+        StorageManager storage = new StorageManager();
+        storage.saveEventToFile(currentEvent);
+    }
+
+    private void loadEventFlow() {
+        StorageManager storage = new StorageManager();
+        Event loadedEvent = storage.loadEventFromFile();
+        if (loadedEvent != null) {
+            eventManager.setCurrentEvent(loadedEvent);
         }
     }
 
@@ -186,7 +212,7 @@ public class UserInterface {
         System.out.println("Enter Categories that " + participant.getName() +" Consumed");
 
         // add participation fee category for each participant as a consumed category
-        Category participationFee = new Category("ParticipationFee");
+        Category participationFee = new Category("Participation Fee");
         participant.addConsumedCategory(participationFee);
 
         while (isMoreCategory || !displayCategories.isEmpty()) {

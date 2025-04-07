@@ -17,6 +17,10 @@ public class EventManager {
         currentEvent = event;
     }
 
+    public void setCurrentEvent(Event currentEvent) {
+        this.currentEvent = currentEvent;
+    }
+
     public void editEvent(Event event) {}
 
     public Event loadEvent(String eventName) {

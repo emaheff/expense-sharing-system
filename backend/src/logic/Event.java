@@ -10,8 +10,9 @@ public class Event {
     private List<Category> categories;
     private List<Participant> participants;
     private List<Debt> debts;
-    private Map<Category, Double> expensePerCategory;
+    private Map<Category, Double> totalExpensePerCategory;
     private Map<Category, List<Participant>> consumedPerCategory;
+    private Map<Category, Map<Participant, Double>> expensePerCategory;
     private boolean isFinalized;
     private boolean isDraft;
 
@@ -23,8 +24,9 @@ public class Event {
         this.categories = new ArrayList<>();
         this.participants = new ArrayList<>();
         this.debts = new ArrayList<>();
-        this.expensePerCategory = new HashMap<>();
+        this.totalExpensePerCategory = new HashMap<>();
         this.consumedPerCategory = new HashMap<>();
+        this.expensePerCategory = new HashMap<>();
     }
 
 
@@ -80,6 +82,18 @@ public class Event {
         return participationFee;
     }
 
+    public Map<Category, List<Participant>> getConsumedPerCategory() {
+        return consumedPerCategory;
+    }
+
+    public Map<Category, Map<Participant, Double>> getExpensePerCategory() {
+        return expensePerCategory;
+    }
+
+    public Map<Category, Double> getTotalExpensePerCategory() {
+        return totalExpensePerCategory;
+    }
+
     public Category getCategoryByName(String categoryName) {
         for (Category category : categories) {
             if (category.getName().equalsIgnoreCase(categoryName)) {
@@ -109,55 +123,50 @@ public class Event {
     }
 
 
-    // this method set for each category in this event all the participant that consumed a category
-    public void setParticipantsConsumedPerCategory() {
-        // iterate throw all the categories in this event
-        for (Category category: categories) {
-            // for each category, iterate throw all participants in this event
-            for (Participant participant: participants) {
-                // for each category that a participant consumed
-                for (Category consumedCategory: participant.getConsumedCategories()) {
-                    // if this event category is equals to the consumed category then add the participant to
-                    // a list of participants that consumed this category.
-                    if (category.equals(consumedCategory)) {
-                        category.addConsumedParticipant(participant);
-                    }
-                }
-            }
-        }
-        fillConsumedPerCategory();
-    }
-
-    public void setParticipantsExpensePerCategory() {
-        for (Category category: categories) {
-            for (Participant participant: participants) {
-                for (Category expenseCategory: participant.getExpenses().keySet()) {
-                    if (category.equals(expenseCategory)) {
-                        category.addSpentParticipant(participant, participant.getExpenses().get(expenseCategory));
-                    }
-                }
-            }
-        }
-        fillExpensePerCategoryMap();
-    }
 
     public void setExpensePerCategory(Map<Category, Double> expenseMap) {
-        this.expensePerCategory = expenseMap;
+        this.totalExpensePerCategory = expenseMap;
     }
 
-    private void fillExpensePerCategoryMap() {
-        for (Category category: categories) {
-            if (category.getName().equalsIgnoreCase("ParticipationFee")) {
-                expensePerCategory.put(category, participationFee * participants.size());
-            } else {
-                expensePerCategory.put(category, category.getTotalExpense());
+    public void fillExpensePerCategory() {
+        expensePerCategory.clear();
+        for (Category category : categories) {
+            Map<Participant, Double> participantExpenses = new HashMap<>();
+            for (Participant participant : participants) {
+                Double amount = participant.getExpenses().get(category);
+                if (amount != null && amount > 0) {
+                    participantExpenses.put(participant, amount);
+                }
             }
+            expensePerCategory.put(category, participantExpenses);
         }
     }
 
-    private void fillConsumedPerCategory() {
+    public void fillConsumedPerCategory() {
+        consumedPerCategory.clear();
         for (Category category: categories) {
-            consumedPerCategory.put(category, category.getConsumedParticipants());
+            List<Participant> consumer = new ArrayList<>();
+            for (Participant participant: participants) {
+                if (participant.getConsumedCategories().contains(category)) {
+                    consumer.add(participant);
+                }
+            }
+            consumedPerCategory.put(category, consumer);
+        }
+    }
+
+    public void fillTotalExpensePerCategory() {
+        totalExpensePerCategory.clear();
+        for (Map.Entry<Category, Map<Participant, Double>> entry : expensePerCategory.entrySet()) {
+            Category category = entry.getKey();
+            Map<Participant, Double> participantExpenses = entry.getValue();
+
+            double total = 0.0;
+            for (double amount : participantExpenses.values()) {
+                total += amount;
+            }
+
+            totalExpensePerCategory.put(category, total);
         }
     }
 
@@ -165,8 +174,8 @@ public class Event {
     private String categoriesAndTotalExpensesToString() {
         StringBuilder result = new StringBuilder();
 
-        for (Category category: categories) {
-            result.append(category.getName()).append(": ").append(category.getTotalExpense()).append("\n");
+        for (Category category: totalExpensePerCategory.keySet()) {
+            result.append(category.getName()).append(": ").append(totalExpensePerCategory.get(category)).append("\n");
         }
         return result.toString();
     }
@@ -183,9 +192,9 @@ public class Event {
                 result.append(consumedCategory.getName()).append(", ");
             }
             double totalConsumed = 0.0;
-            for (Category totalCategory: expensePerCategory.keySet()) {
+            for (Category totalCategory: totalExpensePerCategory.keySet()) {
                 if (participant.getConsumedCategories().contains(totalCategory)) {
-                    totalConsumed += expensePerCategory.get(totalCategory);
+                    totalConsumed += totalExpensePerCategory.get(totalCategory);
                 }
             }
             result.append("\n\t- Total Paid: ").append(participant.getTotalExpense())

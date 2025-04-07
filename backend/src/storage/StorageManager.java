@@ -1,6 +1,6 @@
 package storage;
 
-import logic.Event;
+import logic.*;
 
 import java.io.FileWriter;
 import java.nio.file.DirectoryStream;
@@ -16,7 +16,24 @@ import java.util.Scanner;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
+import com.google.gson.reflect.TypeToken;
+
+import java.util.Map;
+
 public class StorageManager {
+
+    private final Gson gson = new GsonBuilder()
+            .registerTypeAdapter(
+                    new TypeToken<Map<Category, Double>>() {}.getType(),
+                    new CategoryDoubleMapAdapter()
+            )
+            .registerTypeAdapter(
+                    new TypeToken<Map<Category, List<Participant>>>() {}.getType(),
+                    new storage.CategoryToParticipantListAdapter()
+            )
+            .setPrettyPrinting()
+            .create();
+
 
 
     public void saveEventToFile(Event event) {
@@ -69,10 +86,11 @@ public class StorageManager {
         return filePath;
     }
 
+
     private String convertEventToJson(Event event) {
-        Gson gson = new GsonBuilder().setPrettyPrinting().create();
         return gson.toJson(event);
     }
+
 
     private void writeJsonToFile(Path filePath, String jsonContent) {
         try (FileWriter writer = new FileWriter(filePath.toFile())) {
@@ -170,13 +188,14 @@ public class StorageManager {
 
     private Event parseJsonToEvent(String json) {
         try {
-            Gson gson = new Gson();
             return gson.fromJson(json, Event.class);
         } catch (Exception e) {
             System.out.println("Failed to parse event from JSON: " + e.getMessage());
             return null;
         }
     }
+
+
 
     public List<String> listSavedEvents() {
         return null;
