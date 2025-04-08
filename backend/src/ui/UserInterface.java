@@ -108,6 +108,8 @@ public class UserInterface {
         newEvent.fillConsumedPerCategory();
         newEvent.fillExpensePerCategory();
         newEvent.fillTotalExpensePerCategory();
+        CalculationEngine calculationEngine = new CalculationEngine();
+        calculationEngine.calculateBalances(newEvent);
 
     }
 
@@ -142,6 +144,13 @@ public class UserInterface {
         StorageManager storage = new StorageManager();
         Event loadedEvent = storage.loadEventFromFile();
         if (loadedEvent != null) {
+            loadedEvent.fillExpensePerCategory();
+            loadedEvent.fillConsumedPerCategory();
+            loadedEvent.fillTotalExpensePerCategory();
+
+            CalculationEngine engine = new CalculationEngine();
+            engine.calculateBalances(loadedEvent);
+
             eventManager.setCurrentEvent(loadedEvent);
         }
     }

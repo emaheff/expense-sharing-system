@@ -31,6 +31,11 @@ public class StorageManager {
                     new TypeToken<Map<Category, List<Participant>>>() {}.getType(),
                     new storage.CategoryToParticipantListAdapter()
             )
+
+            .registerTypeAdapter(
+                    new TypeToken<Map<Category, Map<Participant, Double>>>() {}.getType(),
+                    new storage.CategoryToParticipantDoubleMapAdapter()
+            )
             .setPrettyPrinting()
             .create();
 

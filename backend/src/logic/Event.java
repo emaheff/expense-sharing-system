@@ -183,7 +183,7 @@ public class Event {
     private String participantsExpensesAndConsumptionToString() {
         StringBuilder result = new StringBuilder();
         for (Participant participant: participants) {
-            result.append(participant.getName()).append("\n\t").append(" - Expenses:\n\t\t");
+            result.append(participant.getName()).append("\n\t").append("- Expenses:\n\t\t");
             for (Category expenseCategory: participant.getExpenses().keySet()) {
                 result.append(expenseCategory.getName()).append(": ").append(participant.getExpenses().get(expenseCategory)).append(", ");
             }
@@ -192,9 +192,13 @@ public class Event {
                 result.append(consumedCategory.getName()).append(", ");
             }
             double totalConsumed = 0.0;
-            for (Category totalCategory: totalExpensePerCategory.keySet()) {
-                if (participant.getConsumedCategories().contains(totalCategory)) {
-                    totalConsumed += totalExpensePerCategory.get(totalCategory);
+            for (Category category : totalExpensePerCategory.keySet()) {
+                if (participant.getConsumedCategories().contains(category)) {
+                    Double totalExpense = totalExpensePerCategory.get(category);
+                    List<Participant> consumers = consumedPerCategory.get(category);
+                    if (totalExpense != null && consumers != null && !consumers.isEmpty()) {
+                        totalConsumed += totalExpense / consumers.size();
+                    }
                 }
             }
             result.append("\n\t- Total Paid: ").append(participant.getTotalExpense())

@@ -43,8 +43,10 @@ public class Participant implements Comparable<Participant> {
 
     public double getTotalExpense() {
         double totalExpense = 0.0;
-        for (Double expense: expenses.values()) {
-            totalExpense += expense;
+        for (Category category: expenses.keySet()) {
+            if (!category.getName().equalsIgnoreCase("Participation Fee")) {
+                totalExpense += expenses.get(category);
+            }
         }
         return totalExpense;
     }

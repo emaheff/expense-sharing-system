@@ -1,6 +1,7 @@
 package storage;
 
 import com.google.gson.*;
+import com.google.gson.reflect.TypeToken;
 import logic.Category;
 import logic.Participant;
 
@@ -29,7 +30,9 @@ public class CategoryToParticipantListAdapter implements JsonSerializer<Map<Cate
         for (Map.Entry<String, JsonElement> entry : jsonObject.entrySet()) {
             String categoryName = entry.getKey();
             Category category = new Category(categoryName);  // construct Category from name
-            List<Participant> participants = context.deserialize(entry.getValue(), List.class);
+            Type participantListType = new TypeToken<List<Participant>>() {}.getType();
+            List<Participant> participants = context.deserialize(entry.getValue(), participantListType);
+
             map.put(category, participants);
         }
         return map;

@@ -1,22 +1,51 @@
 {
-  "eventName": "Party",
-  "participationFee": 30.0,
+  "eventName": "Weekend BBQ",
+  "participationFee": 25.0,
   "categories": [
     {
+      "name": "Food"
+    },
+    {
       "name": "Drinks"
-    },
-    {
-      "name": "Snacks"
-    },
-    {
-      "name": "Decoration"
     }
   ],
   "participants": [
     {
-      "name": "Alice",
+      "name": "John",
       "expenses": {
-        "Drinks": 90.0
+        "Drinks": 60.0,
+        "Food": 120.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Participation Fee"
+        },
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Drinks"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Lisa",
+      "expenses": {},
+      "consumedCategories": [
+        {
+          "name": "Participation Fee"
+        },
+        {
+          "name": "Food"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Mark",
+      "expenses": {
+        "Drinks": 0.0
       },
       "consumedCategories": [
         {
@@ -24,51 +53,22 @@
         },
         {
           "name": "Drinks"
-        },
-        {
-          "name": "Snacks"
-        },
-        {
-          "name": "Decoration"
         }
       ],
       "balance": 0.0
     },
     {
-      "name": "Bob",
-      "expenses": {
-        "Snacks": 60.0
-      },
+      "name": "Emma",
+      "expenses": {},
       "consumedCategories": [
         {
           "name": "Participation Fee"
+        },
+        {
+          "name": "Food"
         },
         {
           "name": "Drinks"
-        },
-        {
-          "name": "Snacks"
-        },
-        {
-          "name": "Decoration"
-        }
-      ],
-      "balance": 0.0
-    },
-    {
-      "name": "Carol",
-      "expenses": {
-        "Decoration": 45.0
-      },
-      "consumedCategories": [
-        {
-          "name": "Participation Fee"
-        },
-        {
-          "name": "Snacks"
-        },
-        {
-          "name": "Decoration"
         }
       ],
       "balance": 0.0
@@ -77,72 +77,82 @@
   "debts": [
     {
       "from": {
-        "name": "Bob",
-        "expenses": {
-          "Snacks": 60.0
-        },
+        "name": "Emma",
+        "expenses": {},
         "consumedCategories": [
           {
             "name": "Participation Fee"
           },
           {
+            "name": "Food"
+          },
+          {
             "name": "Drinks"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
           }
         ],
         "balance": 0.0
       },
       "to": {
-        "name": "Carol",
+        "name": "John",
         "expenses": {
-          "Decoration": 45.0
+          "Drinks": 60.0,
+          "Food": 120.0
         },
         "consumedCategories": [
           {
             "name": "Participation Fee"
           },
           {
-            "name": "Snacks"
+            "name": "Food"
           },
           {
-            "name": "Decoration"
+            "name": "Drinks"
           }
         ],
         "balance": 0.0
       },
-      "amount": 10.0
+      "amount": 60.0
     },
     {
       "from": {
-        "name": "Bob",
-        "expenses": {
-          "Snacks": 60.0
-        },
+        "name": "Lisa",
+        "expenses": {},
         "consumedCategories": [
           {
             "name": "Participation Fee"
           },
           {
-            "name": "Drinks"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
+            "name": "Food"
           }
         ],
         "balance": 0.0
       },
       "to": {
-        "name": "Alice",
+        "name": "John",
         "expenses": {
-          "Drinks": 90.0
+          "Drinks": 60.0,
+          "Food": 120.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "amount": 40.0
+    },
+    {
+      "from": {
+        "name": "Mark",
+        "expenses": {
+          "Drinks": 0.0
         },
         "consumedCategories": [
           {
@@ -150,175 +160,61 @@
           },
           {
             "name": "Drinks"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
           }
         ],
         "balance": 0.0
       },
-      "amount": 10.0
+      "to": {
+        "name": "John",
+        "expenses": {
+          "Drinks": 60.0,
+          "Food": 120.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "amount": 20.0
     }
   ],
   "totalExpensePerCategory": {
-    "Decoration": 45.0,
-    "Snacks": 60.0,
-    "Drinks": 90.0
+    "Drinks": 60.0,
+    "Food": 120.0
   },
   "consumedPerCategory": {
-    "Decoration": [
-      {
-        "name": "Alice",
-        "expenses": {
-          "Drinks": 90.0
-        },
-        "consumedCategories": [
-          {
-            "name": "Participation Fee"
-          },
-          {
-            "name": "Drinks"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
-          }
-        ],
-        "balance": 0.0
-      },
-      {
-        "name": "Bob",
-        "expenses": {
-          "Snacks": 60.0
-        },
-        "consumedCategories": [
-          {
-            "name": "Participation Fee"
-          },
-          {
-            "name": "Drinks"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
-          }
-        ],
-        "balance": 0.0
-      },
-      {
-        "name": "Carol",
-        "expenses": {
-          "Decoration": 45.0
-        },
-        "consumedCategories": [
-          {
-            "name": "Participation Fee"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
-          }
-        ],
-        "balance": 0.0
-      }
-    ],
-    "Snacks": [
-      {
-        "name": "Alice",
-        "expenses": {
-          "Drinks": 90.0
-        },
-        "consumedCategories": [
-          {
-            "name": "Participation Fee"
-          },
-          {
-            "name": "Drinks"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
-          }
-        ],
-        "balance": 0.0
-      },
-      {
-        "name": "Bob",
-        "expenses": {
-          "Snacks": 60.0
-        },
-        "consumedCategories": [
-          {
-            "name": "Participation Fee"
-          },
-          {
-            "name": "Drinks"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
-          }
-        ],
-        "balance": 0.0
-      },
-      {
-        "name": "Carol",
-        "expenses": {
-          "Decoration": 45.0
-        },
-        "consumedCategories": [
-          {
-            "name": "Participation Fee"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
-          }
-        ],
-        "balance": 0.0
-      }
-    ],
     "Drinks": [
       {
-        "name": "Alice",
+        "name": "John",
         "expenses": {
-          "Drinks": 90.0
+          "Drinks": 60.0,
+          "Food": 120.0
         },
         "consumedCategories": [
           {
             "name": "Participation Fee"
           },
           {
+            "name": "Food"
+          },
+          {
             "name": "Drinks"
-          },
-          {
-            "name": "Snacks"
-          },
-          {
-            "name": "Decoration"
           }
         ],
         "balance": 0.0
       },
       {
-        "name": "Bob",
+        "name": "Mark",
         "expenses": {
-          "Snacks": 60.0
+          "Drinks": 0.0
         },
         "consumedCategories": [
           {
@@ -326,12 +222,72 @@
           },
           {
             "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Emma",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
           },
           {
-            "name": "Snacks"
+            "name": "Food"
           },
           {
-            "name": "Decoration"
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Food": [
+      {
+        "name": "John",
+        "expenses": {
+          "Drinks": 60.0,
+          "Food": 120.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Lisa",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Emma",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
           }
         ],
         "balance": 0.0
@@ -339,14 +295,11 @@
     ]
   },
   "expensePerCategory": {
-    "Decoration": {
-      "logic.Participant@77459877": 45.0
-    },
-    "Snacks": {
-      "logic.Participant@38af3868": 60.0
-    },
     "Drinks": {
-      "logic.Participant@6b884d57": 90.0
+      "John": 60.0
+    },
+    "Food": {
+      "John": 120.0
     }
   },
   "isFinalized": false,

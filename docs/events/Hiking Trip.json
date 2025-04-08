@@ -1,0 +1,208 @@
+{
+  "eventName": "Hiking Trip",
+  "participationFee": 30.0,
+  "categories": [
+    {
+      "name": "Food"
+    },
+    {
+      "name": "Transpotation"
+    },
+    {
+      "name": "Equipment Rental"
+    }
+  ],
+  "participants": [
+    {
+      "name": "Alice",
+      "expenses": {
+        "Food": 90.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Participation Fee"
+        },
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Transpotation"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Bob",
+      "expenses": {
+        "Transpotation": 60.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Participation Fee"
+        },
+        {
+          "name": "Transpotation"
+        },
+        {
+          "name": "Equipment Rental"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Charlie",
+      "expenses": {},
+      "consumedCategories": [
+        {
+          "name": "Participation Fee"
+        },
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Equipment Rental"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Dave",
+      "expenses": {},
+      "consumedCategories": [
+        {
+          "name": "Participation Fee"
+        }
+      ],
+      "balance": 0.0
+    }
+  ],
+  "debts": [],
+  "totalExpensePerCategory": {
+    "Transpotation": 60.0,
+    "Equipment Rental": 0.0,
+    "Food": 90.0
+  },
+  "consumedPerCategory": {
+    "Transpotation": [
+      {
+        "name": "Alice",
+        "expenses": {
+          "Food": 90.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transpotation"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Bob",
+        "expenses": {
+          "Transpotation": 60.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Transpotation"
+          },
+          {
+            "name": "Equipment Rental"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Equipment Rental": [
+      {
+        "name": "Bob",
+        "expenses": {
+          "Transpotation": 60.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Transpotation"
+          },
+          {
+            "name": "Equipment Rental"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Equipment Rental"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Food": [
+      {
+        "name": "Alice",
+        "expenses": {
+          "Food": 90.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transpotation"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Participation Fee"
+          },
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Equipment Rental"
+          }
+        ],
+        "balance": 0.0
+      }
+    ]
+  },
+  "expensePerCategory": {
+    "Transpotation": {
+      "Bob": 60.0
+    },
+    "Equipment Rental": {},
+    "Food": {
+      "Alice": 90.0
+    }
+  },
+  "isFinalized": false,
+  "isDraft": false
+}
