@@ -13,14 +13,10 @@ public class Event {
     private Map<Category, Double> totalExpensePerCategory;
     private Map<Category, List<Participant>> consumedPerCategory;
     private Map<Category, Map<Participant, Double>> expensePerCategory;
-    private boolean isFinalized;
-    private boolean isDraft;
 
-    public Event(String name, double participationFee, boolean isDraft) {
+    public Event(String name, double participationFee) {
         this.eventName = name;
         this.participationFee = participationFee;
-        this.isDraft = isDraft;
-        this.isFinalized = false;
         this.categories = new ArrayList<>();
         this.participants = new ArrayList<>();
         this.debts = new ArrayList<>();
@@ -29,37 +25,17 @@ public class Event {
         this.expensePerCategory = new HashMap<>();
     }
 
-
-    // adds new participant to participants list
     public void addParticipant(Participant participant) {
         participants.add(participant);
     }
-
-    // removes a participant from participants list
-    public void removeParticipant(Participant participant) {}
 
     public void addCategory(Category category) {
         categories.add(category);
     }
 
-    //
-    public List<Debt> calculateBalances() {
-        return null;
-    }
-
-    // adds participant fee for the event participation
-    public void applyParticipantFees() {}
-
+    // Getters and Setters
     public String getEventName() {
         return eventName;
-    }
-
-    public boolean isFinalized() {
-        return isFinalized;
-    }
-
-    public boolean isDraft() {
-        return isDraft;
     }
 
     public List<Participant> getParticipants() {
@@ -74,7 +50,7 @@ public class Event {
         this.debts = debts;
     }
 
-    public List<Debt> getDebts(){
+    public List<Debt> getDebts() {
         return debts;
     }
 
@@ -86,47 +62,15 @@ public class Event {
         return consumedPerCategory;
     }
 
-    public Map<Category, Map<Participant, Double>> getExpensePerCategory() {
-        return expensePerCategory;
-    }
-
     public Map<Category, Double> getTotalExpensePerCategory() {
         return totalExpensePerCategory;
     }
 
-    public Category getCategoryByName(String categoryName) {
-        for (Category category : categories) {
-            if (category.getName().equalsIgnoreCase(categoryName)) {
-                return category;
-            }
-        }
-        return null;
-    }
-
-
-
-
+    @Override
     public String toString() {
-        return String.format("""
-                === Event Summary ===
-                Event name: %s
-                Participation Fee: %f
-                
-                --- Categories and Total Expenses ---
-                %s
-                
-                --- Participants: Expense and Consumption ---
-                %s
-                
-                --- Debts ---
-                %s""", eventName, participationFee, categoriesAndTotalExpensesToString(), participantsExpensesAndConsumptionToString(), debtsToString());
+        return "Event{name='%s', participants=%d}".formatted(eventName, participants.size());
     }
 
-
-
-    public void setExpensePerCategory(Map<Category, Double> expenseMap) {
-        this.totalExpensePerCategory = expenseMap;
-    }
 
     public void fillExpensePerCategory() {
         expensePerCategory.clear();
@@ -170,55 +114,63 @@ public class Event {
         }
     }
 
-
-    private String categoriesAndTotalExpensesToString() {
-        StringBuilder result = new StringBuilder();
-
-        for (Category category: totalExpensePerCategory.keySet()) {
-            result.append(category.getName()).append(": ").append(totalExpensePerCategory.get(category)).append("\n");
-        }
-        return result.toString();
+    public void finalizeCalculations() {
+        fillConsumedPerCategory();
+        fillExpensePerCategory();
+        fillTotalExpensePerCategory();
+        CalculationEngine engine = new CalculationEngine();
+        engine.calculateBalances(this);
     }
 
-    private String participantsExpensesAndConsumptionToString() {
-        StringBuilder result = new StringBuilder();
-        for (Participant participant: participants) {
-            result.append(participant.getName()).append("\n\t").append("- Expenses:\n\t\t");
-            for (Category expenseCategory: participant.getExpenses().keySet()) {
-                result.append(expenseCategory.getName()).append(": ").append(participant.getExpenses().get(expenseCategory)).append(", ");
-            }
-            result.append("\n\t- Consumed:\n\t\t");
-            for (Category consumedCategory: participant.getConsumedCategories()) {
-                result.append(consumedCategory.getName()).append(", ");
-            }
-            double totalConsumed = 0.0;
-            for (Category category : totalExpensePerCategory.keySet()) {
-                if (participant.getConsumedCategories().contains(category)) {
-                    Double totalExpense = totalExpensePerCategory.get(category);
-                    List<Participant> consumers = consumedPerCategory.get(category);
-                    if (totalExpense != null && consumers != null && !consumers.isEmpty()) {
-                        totalConsumed += totalExpense / consumers.size();
-                    }
-                }
-            }
-            result.append("\n\t- Total Paid: ").append(participant.getTotalExpense())
-                    .append("\n\t- Total Consumed: ").append(totalConsumed).append("\n\n");
-        }
-        return result.toString();
-    }
 
-    private String  debtsToString () {
-        if (debts.isEmpty()) {
-            return "No one owes money to no one";
-        }
-
-        StringBuilder result = new StringBuilder(String.format("%s", debts.get(0)));
-
-        for (int i = 1; i < debts.size(); i++) {
-            result.append("\n").append((debts.get(i)));
-        }
-
-        result.append("}");
-        return result.toString();
-    }
+//    public String categoriesAndTotalExpensesToString() {
+//        StringBuilder result = new StringBuilder();
+//
+//        for (Category category: totalExpensePerCategory.keySet()) {
+//            result.append(category.getName()).append(": ").append(totalExpensePerCategory.get(category)).append("\n");
+//        }
+//        return result.toString();
+//    }
+//
+//    public String participantsExpensesAndConsumptionToString() {
+//        StringBuilder result = new StringBuilder();
+//        for (Participant participant: participants) {
+//            result.append(participant.getName()).append("\n\t").append("- Expenses:\n\t\t");
+//            for (Category expenseCategory: participant.getExpenses().keySet()) {
+//                result.append(expenseCategory.getName()).append(": ").append(participant.getExpenses().get(expenseCategory)).append(", ");
+//            }
+//            result.append("\n\t- Consumed:\n\t\t");
+//            for (Category consumedCategory: participant.getConsumedCategories()) {
+//                result.append(consumedCategory.getName()).append(", ");
+//            }
+//            double totalConsumed = 0.0;
+//            for (Category category : totalExpensePerCategory.keySet()) {
+//                if (participant.getConsumedCategories().contains(category)) {
+//                    Double totalExpense = totalExpensePerCategory.get(category);
+//                    List<Participant> consumers = consumedPerCategory.get(category);
+//                    if (totalExpense != null && consumers != null && !consumers.isEmpty()) {
+//                        totalConsumed += totalExpense / consumers.size();
+//                    }
+//                }
+//            }
+//            result.append("\n\t- Total Paid: ").append(participant.getTotalExpense())
+//                    .append("\n\t- Total Consumed: ").append(totalConsumed).append("\n\n");
+//        }
+//        return result.toString();
+//    }
+//
+//    public String  debtsToString () {
+//        if (debts.isEmpty()) {
+//            return "No one owes money to no one";
+//        }
+//
+//        StringBuilder result = new StringBuilder(String.format("%s", debts.get(0)));
+//
+//        for (int i = 1; i < debts.size(); i++) {
+//            result.append("\n").append((debts.get(i)));
+//        }
+//
+//        result.append("}");
+//        return result.toString();
+//    }
 }

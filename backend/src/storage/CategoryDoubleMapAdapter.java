@@ -1,6 +1,7 @@
-package logic;
+package storage;
 
 import com.google.gson.*;
+import logic.Category;
 
 import java.lang.reflect.Type;
 import java.util.HashMap;

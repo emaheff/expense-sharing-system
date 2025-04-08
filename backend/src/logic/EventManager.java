@@ -21,22 +21,9 @@ public class EventManager {
         this.currentEvent = currentEvent;
     }
 
-    public void editEvent(Event event) {}
-
-    public Event loadEvent(String eventName) {
-        return null;
-    }
-
-    public void saveEventToFile(Event event) {}
-
-    public void switchEvent(Event event) {}
-
     public Event getCurrentEvent() {
         return currentEvent;
     }
 
-    public List<Event> getEvents() {
-        return events;
-    }
 
 }

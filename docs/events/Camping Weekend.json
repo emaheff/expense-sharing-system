@@ -1,0 +1,500 @@
+{
+  "eventName": "Camping Weekend",
+  "participationFee": 15.0,
+  "categories": [
+    {
+      "name": "Food"
+    },
+    {
+      "name": "Transport"
+    },
+    {
+      "name": "Equipment"
+    },
+    {
+      "name": "Drinks"
+    }
+  ],
+  "participants": [
+    {
+      "name": "Alice",
+      "expenses": {
+        "Drinks": 30.0,
+        "Food": 100.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Drinks"
+        },
+        {
+          "name": "Transport"
+        }
+      ],
+      "balance": 64.22297297297298
+    },
+    {
+      "name": "Bob",
+      "expenses": {
+        "Transport": 120.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Transport"
+        },
+        {
+          "name": "Equipment"
+        }
+      ],
+      "balance": 10.777027027027046
+    },
+    {
+      "name": "Charlie",
+      "expenses": {},
+      "consumedCategories": [
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Transport"
+        },
+        {
+          "name": "Equipment"
+        },
+        {
+          "name": "Drinks"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Diana",
+      "expenses": {
+        "Equipment": 80.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Equipment"
+        },
+        {
+          "name": "Drinks"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Ethan",
+      "expenses": {
+        "Drinks": 40.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Drinks"
+        }
+      ],
+      "balance": 0.0
+    }
+  ],
+  "debts": [
+    {
+      "from": {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "to": {
+        "name": "Ethan",
+        "expenses": {
+          "Drinks": 40.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "amount": 6.11486486486487
+    },
+    {
+      "from": {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "to": {
+        "name": "Diana",
+        "expenses": {
+          "Equipment": 80.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "amount": 44.78603603603604
+    },
+    {
+      "from": {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "to": {
+        "name": "Bob",
+        "expenses": {
+          "Transport": 120.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          }
+        ],
+        "balance": 10.777027027027046
+      },
+      "amount": 36.13738738738738
+    }
+  ],
+  "totalExpensePerCategory": {
+    "Equipment": 80.0,
+    "Drinks": 70.0,
+    "Food": 100.0,
+    "Transport": 120.0
+  },
+  "consumedPerCategory": {
+    "Equipment": [
+      {
+        "name": "Bob",
+        "expenses": {
+          "Transport": 120.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          }
+        ],
+        "balance": 10.777027027027046
+      },
+      {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Diana",
+        "expenses": {
+          "Equipment": 80.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Drinks": [
+      {
+        "name": "Alice",
+        "expenses": {
+          "Drinks": 30.0,
+          "Food": 100.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          },
+          {
+            "name": "Transport"
+          }
+        ],
+        "balance": 64.22297297297298
+      },
+      {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Diana",
+        "expenses": {
+          "Equipment": 80.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Ethan",
+        "expenses": {
+          "Drinks": 40.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Food": [
+      {
+        "name": "Alice",
+        "expenses": {
+          "Drinks": 30.0,
+          "Food": 100.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          },
+          {
+            "name": "Transport"
+          }
+        ],
+        "balance": 64.22297297297298
+      },
+      {
+        "name": "Bob",
+        "expenses": {
+          "Transport": 120.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          }
+        ],
+        "balance": 10.777027027027046
+      },
+      {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Ethan",
+        "expenses": {
+          "Drinks": 40.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Transport": [
+      {
+        "name": "Alice",
+        "expenses": {
+          "Drinks": 30.0,
+          "Food": 100.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          },
+          {
+            "name": "Transport"
+          }
+        ],
+        "balance": 64.22297297297298
+      },
+      {
+        "name": "Bob",
+        "expenses": {
+          "Transport": 120.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          }
+        ],
+        "balance": 10.777027027027046
+      },
+      {
+        "name": "Charlie",
+        "expenses": {},
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Transport"
+          },
+          {
+            "name": "Equipment"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      }
+    ]
+  },
+  "expensePerCategory": {
+    "Equipment": {
+      "Diana": 80.0
+    },
+    "Drinks": {
+      "Alice": 30.0,
+      "Ethan": 40.0
+    },
+    "Food": {
+      "Alice": 100.0
+    },
+    "Transport": {
+      "Bob": 120.0
+    }
+  }
+}

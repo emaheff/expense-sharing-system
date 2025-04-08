@@ -5,6 +5,7 @@ import storage.StorageManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 
 public class UserInterface {
@@ -12,10 +13,13 @@ public class UserInterface {
     private EventManager eventManager;
     private boolean isRunning = true;
     private Scanner scanner;
+    private CalculationEngine calculationEngine;
+
 
     public UserInterface(EventManager eventManager) {
         this.eventManager = eventManager;
         this.scanner = new Scanner(System.in);
+        this.calculationEngine = new CalculationEngine();
     }
 
     // Entry point of the program's UI
@@ -72,10 +76,11 @@ public class UserInterface {
         }
     }
 
-    public void createEvent() {
+    private void createEvent() {
         System.out.println("=== Create New Event ===");
 
         System.out.println("Enter event name: ");
+
         String name = scanner.nextLine();
 
         double fee = 0;
@@ -90,13 +95,7 @@ public class UserInterface {
             }
         }
 
-        System.out.print("Is this a draft? (yes/no): ");
-        String draftInput = scanner.nextLine();
-        boolean isDraft = draftInput.equalsIgnoreCase("yes");
-
-
-
-        Event newEvent = new Event(name, fee, isDraft);
+        Event newEvent = new Event(name, fee);
 
         defineCategories(newEvent); // Define consumed/expenses categories for this new event
         eventManager.createEvent(newEvent);
@@ -105,12 +104,7 @@ public class UserInterface {
 
         addParticipants(newEvent);
 
-        newEvent.fillConsumedPerCategory();
-        newEvent.fillExpensePerCategory();
-        newEvent.fillTotalExpensePerCategory();
-        CalculationEngine calculationEngine = new CalculationEngine();
-        calculationEngine.calculateBalances(newEvent);
-
+        newEvent.finalizeCalculations();
     }
 
     private void defineCategories(Event newEvent) {
@@ -137,23 +131,60 @@ public class UserInterface {
         }
 
         StorageManager storage = new StorageManager();
-        storage.saveEventToFile(currentEvent);
+        String eventName = currentEvent.getEventName();
+
+        if (storage.doesEventFileExist(eventName)) {
+            System.out.printf("A file named \"%s.json\" already exists. Overwrite? (yes/no): ", eventName);
+            String answer = scanner.nextLine();
+            if (!answer.equalsIgnoreCase("yes")) {
+                System.out.println("Save cancelled.");
+                return;
+            }
+        }
+
+        boolean success = storage.saveEventToFile(currentEvent);
+        if (success) {
+            System.out.printf("Event \"%s\" saved successfully.%n", eventName);
+        } else {
+            System.out.printf("Failed to save event \"%s\".%n", eventName);
+        }
     }
+
 
     private void loadEventFlow() {
         StorageManager storage = new StorageManager();
-        Event loadedEvent = storage.loadEventFromFile();
-        if (loadedEvent != null) {
-            loadedEvent.fillExpensePerCategory();
-            loadedEvent.fillConsumedPerCategory();
-            loadedEvent.fillTotalExpensePerCategory();
+        List<String> savedEvents = storage.getSavedEventNames();
 
-            CalculationEngine engine = new CalculationEngine();
-            engine.calculateBalances(loadedEvent);
+        if (savedEvents.isEmpty()) {
+            System.out.println("No saved events found.");
+            return;
+        }
 
-            eventManager.setCurrentEvent(loadedEvent);
+        System.out.println("Choose an event to load:");
+        for (int i = 0; i < savedEvents.size(); i++) {
+            System.out.printf("%d. %s%n", i + 1, savedEvents.get(i));
+        }
+
+        System.out.print("Enter number of event: ");
+        int choice = Integer.parseInt(scanner.nextLine());
+
+        if (choice < 1 || choice > savedEvents.size()) {
+            System.out.println("Invalid choice.");
+            return;
+        }
+
+        String selectedEventName = savedEvents.get(choice - 1);
+        Event event = storage.loadEventByName(selectedEventName);
+
+        if (event != null) {
+            event.finalizeCalculations();
+            eventManager.setCurrentEvent(event);
+            System.out.printf("Event \"%s\" loaded successfully.%n", selectedEventName);
+        } else {
+            System.out.println("Failed to load event.");
         }
     }
+
 
     private void addParticipants(Event newEvent) {
         boolean isMoreParticipant = true;
@@ -200,7 +231,7 @@ public class UserInterface {
             double amount = Double.parseDouble(scanner.nextLine());
 
             // adds the expense to the participant expenses list
-            participant.addExpense(expenseCategory, amount);
+            ParticipantEditor.addExpense(participant, expenseCategory, amount);
 
 
 
@@ -220,31 +251,41 @@ public class UserInterface {
         List<Category> displayCategories = new ArrayList<>(categories);
         System.out.println("Enter Categories that " + participant.getName() +" Consumed");
 
-        // add participation fee category for each participant as a consumed category
-        Category participationFee = new Category("Participation Fee");
-        participant.addConsumedCategory(participationFee);
-
         while (isMoreCategory || !displayCategories.isEmpty()) {
-            // ask from the user to choose category that the participant consumed
             System.out.println("Enter Category Number The Participant Consumed From These Categories:" +
-                    "if there are none enter 0");
+                    " if there are none enter 0");
             System.out.println(displayNumberedCategories(displayCategories));
 
-            // get user answer and create new category
-            int userNumber = Integer.parseInt(scanner.nextLine());
-            if (userNumber == 0)
-                break;
+            int userNumber = -1;
+            boolean validInput = false;
+
+            while (!validInput) {
+                try {
+                    System.out.print("Your choice: ");
+                    userNumber = Integer.parseInt(scanner.nextLine());
+                    if (userNumber == 0) {
+                        return;
+                    }
+                    if (userNumber >= 1 && userNumber <= displayCategories.size()) {
+                        validInput = true;
+                    } else {
+                        System.out.println("Please enter a number between 1 and " + displayCategories.size() + ", or 0 to skip.");
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Invalid input. Please enter a number.");
+                }
+            }
+
             Category consumedCategory = getCategoryFromNumber(userNumber, displayCategories);
+            ParticipantEditor.addConsumedCategory(participant, consumedCategory);
 
-            // adds the category to the consumed list of the participant
-            participant.addConsumedCategory(consumedCategory);
-
-            // ask the user if there are more categories that the participant consumed
-            System.out.println("Is there are more categories that the participant consumed (Y/N)");
+            System.out.println("Are there more categories that the participant consumed? (Y/N)");
             String userAnswer = scanner.nextLine();
-            if (!userAnswer.equalsIgnoreCase("Y"))
+            if (!userAnswer.equalsIgnoreCase("Y")) {
                 isMoreCategory = false;
+            }
         }
+
     }
 
     private String displayNumberedCategories(List<Category> categories) {
@@ -262,7 +303,7 @@ public class UserInterface {
         return result;
     }
 
-    public void showResultsForCurrentEvent() {
+    private void showResultsForCurrentEvent() {
         Event currentEvent = eventManager.getCurrentEvent();
 
         if (currentEvent == null) {
@@ -272,33 +313,16 @@ public class UserInterface {
 
         System.out.println("=== Event Results: " + currentEvent.getEventName() + " ===");
 
-        CalculationEngine calculationEngine = new CalculationEngine();
         calculationEngine.calculateBalances(currentEvent);
-        System.out.println(currentEvent);
+
+        Map<Participant, Double> totalConsumedMap = calculationEngine.getLatestConsumptionMap();
+
+        System.out.print(EventPresenter.formatParticipants(currentEvent, totalConsumedMap));
+        System.out.println(EventPresenter.formatDebts(currentEvent.getDebts()));
+        System.out.println("=============================");
+
         System.out.println("=============================");
     }
 
 
-
-
-    public void displayEventSummary(Event event) {
-        // Show details of the current event
-    }
-
-    public void displayDebts(List<Debt> debts) {
-        // Display who owes whom and how much
-    }
-
-    // Prompt user for event details and create new event
-    public void collectEventData() {
-
-    }
-
-    public void collectParticipantData() {
-        // Prompt user to add participants and their info
-    }
-
-    public void handleEditFlow() {
-        // Allow user to edit existing event or participant
-    }
 }

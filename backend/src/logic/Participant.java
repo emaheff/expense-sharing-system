@@ -25,10 +25,6 @@ public class Participant implements Comparable<Participant> {
         consumedCategories.add(category);
     }
 
-    public void consumedCategory(Category category) {}
-
-    public void editExpense(Category category, Double newAmount) {}
-
     public String getName() {
         return name;
     }
@@ -63,6 +59,4 @@ public class Participant implements Comparable<Participant> {
     public int compareTo(Participant other) {
         return Double.compare(this.balance, other.balance);
     }
-
-
 }
