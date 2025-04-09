@@ -55,6 +55,14 @@ public class Participant implements Comparable<Participant> {
         return balance;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setConsumedCategories(List<Category> consumedCategories) {
+        this.consumedCategories = consumedCategories;
+    }
+
     @Override
     public int compareTo(Participant other) {
         return Double.compare(this.balance, other.balance);

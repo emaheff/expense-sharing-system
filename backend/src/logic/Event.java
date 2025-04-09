@@ -58,6 +58,14 @@ public class Event {
         return participationFee;
     }
 
+    public void setEventName(String name) {
+        this.eventName = name;
+    }
+
+    public void setParticipationFee(double amount) {
+        this.participationFee = amount;
+    }
+
     public Map<Category, List<Participant>> getConsumedPerCategory() {
         return consumedPerCategory;
     }
