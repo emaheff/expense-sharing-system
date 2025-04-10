@@ -45,6 +45,4 @@ public class EventPresenter {
 
         return sb.toString().stripTrailing();
     }
-
-
 }

@@ -40,9 +40,7 @@ public class Participant implements Comparable<Participant> {
     public double getTotalExpense() {
         double totalExpense = 0.0;
         for (Category category: expenses.keySet()) {
-            if (!category.getName().equalsIgnoreCase("Participation Fee")) {
-                totalExpense += expenses.get(category);
-            }
+           totalExpense += expenses.get(category);
         }
         return totalExpense;
     }
@@ -57,10 +55,6 @@ public class Participant implements Comparable<Participant> {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public void setConsumedCategories(List<Category> consumedCategories) {
-        this.consumedCategories = consumedCategories;
     }
 
     @Override
