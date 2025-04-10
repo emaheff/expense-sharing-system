@@ -1,0 +1,113 @@
+@startuml
+' Define packages
+package "logic" {
+  class Event {
+    - String eventName
+    - double participationFee
+    - List<Category> categories
+    - List<Participant> participants
+    - List<Debt> debts
+    + finalizeCalculations()
+  }
+
+  class Participant {
+    - String name
+    - Map<Category, Double> expenses
+    - List<Category> consumedCategories
+    - double balance
+    + getTotalExpense()
+    + compareTo()
+  }
+
+  class Category {
+    - String name
+    + getName()
+  }
+
+  class Debt {
+    - Participant from
+    - Participant to
+    - double amount
+  }
+
+  class CalculationEngine {
+    - Map<Category, Double> totalExpensePerCategory
+    - Map<Category, List<Participant>> consumedPerCategory
+    - Map<Category, Map<Participant, Double>> expensePerCategory
+    + calculateBalances(Event)
+  }
+
+  class EventEditor {
+    + renameEvent(...)
+    + setParticipationFee(...)
+    + addCategory(...)
+    + assignCategoryDetailsToParticipant(...)
+    + removeCategory(...)
+    + renameCategory(...)
+    + addParticipant(...)
+    + removeParticipant(...)
+    + renameParticipant(...)
+    + editParticipantExpense(...)
+    + editParticipantConsumption(...)
+  }
+
+  class ParticipantEditor {
+    + addExpense(...)
+    + addConsumedCategory(...)
+  }
+
+  class EventManager {
+    - Event currentEvent
+    + createEvent(...)
+    + setCurrentEvent(...)
+    + getCurrentEvent()
+  }
+}
+
+package "ui" {
+  class UserInterface {
+    - EventManager eventManager
+    - CalculationEngine calculationEngine
+    - Scanner scanner
+    + start()
+  }
+
+  class EventPresenter {
+    + formatParticipants(...)
+    + formatDebts(...)
+    + formatEventSummary(...)
+  }
+}
+
+package "storage" {
+  class StorageManager {
+    - Path EVENTS_DIRECTORY
+    + saveEventToFile(...)
+    + loadEventByName(...)
+    + getSavedEventNames()
+  }
+
+  class CategoryDoubleMapAdapter
+  class CategoryToParticipantListAdapter
+  class CategoryToParticipantDoubleMapAdapter
+}
+
+' Relationships
+Event --> Participant
+Event --> Category
+Event --> Debt
+Participant --> Category
+Debt --> Participant : from / to
+CalculationEngine --> Event
+CalculationEngine --> Category
+CalculationEngine --> Participant
+EventManager --> Event
+UserInterface --> EventManager
+UserInterface --> CalculationEngine
+UserInterface --> EventPresenter
+UserInterface --> StorageManager
+StorageManager --> Event
+StorageManager --> CategoryDoubleMapAdapter
+StorageManager --> CategoryToParticipantListAdapter
+StorageManager --> CategoryToParticipantDoubleMapAdapter
+@enduml

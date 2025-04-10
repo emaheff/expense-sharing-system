@@ -96,9 +96,9 @@ public class Event {
 
     public void fillConsumedPerCategory() {
         consumedPerCategory.clear();
-        for (Category category: categories) {
+        for (Category category : categories) {
             List<Participant> consumer = new ArrayList<>();
-            for (Participant participant: participants) {
+            for (Participant participant : participants) {
                 if (participant.getConsumedCategories().contains(category)) {
                     consumer.add(participant);
                 }
@@ -129,56 +129,4 @@ public class Event {
         CalculationEngine engine = new CalculationEngine();
         engine.calculateBalances(this);
     }
-
-
-//    public String categoriesAndTotalExpensesToString() {
-//        StringBuilder result = new StringBuilder();
-//
-//        for (Category category: totalExpensePerCategory.keySet()) {
-//            result.append(category.getName()).append(": ").append(totalExpensePerCategory.get(category)).append("\n");
-//        }
-//        return result.toString();
-//    }
-//
-//    public String participantsExpensesAndConsumptionToString() {
-//        StringBuilder result = new StringBuilder();
-//        for (Participant participant: participants) {
-//            result.append(participant.getName()).append("\n\t").append("- Expenses:\n\t\t");
-//            for (Category expenseCategory: participant.getExpenses().keySet()) {
-//                result.append(expenseCategory.getName()).append(": ").append(participant.getExpenses().get(expenseCategory)).append(", ");
-//            }
-//            result.append("\n\t- Consumed:\n\t\t");
-//            for (Category consumedCategory: participant.getConsumedCategories()) {
-//                result.append(consumedCategory.getName()).append(", ");
-//            }
-//            double totalConsumed = 0.0;
-//            for (Category category : totalExpensePerCategory.keySet()) {
-//                if (participant.getConsumedCategories().contains(category)) {
-//                    Double totalExpense = totalExpensePerCategory.get(category);
-//                    List<Participant> consumers = consumedPerCategory.get(category);
-//                    if (totalExpense != null && consumers != null && !consumers.isEmpty()) {
-//                        totalConsumed += totalExpense / consumers.size();
-//                    }
-//                }
-//            }
-//            result.append("\n\t- Total Paid: ").append(participant.getTotalExpense())
-//                    .append("\n\t- Total Consumed: ").append(totalConsumed).append("\n\n");
-//        }
-//        return result.toString();
-//    }
-//
-//    public String  debtsToString () {
-//        if (debts.isEmpty()) {
-//            return "No one owes money to no one";
-//        }
-//
-//        StringBuilder result = new StringBuilder(String.format("%s", debts.get(0)));
-//
-//        for (int i = 1; i < debts.size(); i++) {
-//            result.append("\n").append((debts.get(i)));
-//        }
-//
-//        result.append("}");
-//        return result.toString();
-//    }
 }
