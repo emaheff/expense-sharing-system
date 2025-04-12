@@ -97,5 +97,4 @@ class ParticipantTest {
         Participant p = new Participant(name);
         assertEquals(name, p.getName());
     }
-
 }

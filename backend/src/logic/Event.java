@@ -70,6 +70,10 @@ public class Event {
         return consumedPerCategory;
     }
 
+    public Map<Category, Map<Participant, Double>> getExpensePerCategory() {
+        return expensePerCategory;
+    }
+
     public Map<Category, Double> getTotalExpensePerCategory() {
         return totalExpensePerCategory;
     }
@@ -82,11 +86,16 @@ public class Event {
 
     public void fillExpensePerCategory() {
         expensePerCategory.clear();
+        // iterate throw all categories in this event
         for (Category category : categories) {
             Map<Participant, Double> participantExpenses = new HashMap<>();
+            // iterate throw all participants in this event
             for (Participant participant : participants) {
+                // getExpenses returns Map<Category, Double> - it's all the category that the participant spent money on
+                // and the amount of money that he spent on the category
                 Double amount = participant.getExpenses().get(category);
                 if (amount != null && amount > 0) {
+                    // put the amount of money that participant spent money on the current category int participantExpenses map
                     participantExpenses.put(participant, amount);
                 }
             }
@@ -96,8 +105,10 @@ public class Event {
 
     public void fillConsumedPerCategory() {
         consumedPerCategory.clear();
+        // iterate throw all categories in this event
         for (Category category : categories) {
             List<Participant> consumer = new ArrayList<>();
+            // iterate throw all participants in this event
             for (Participant participant : participants) {
                 if (participant.getConsumedCategories().contains(category)) {
                     consumer.add(participant);

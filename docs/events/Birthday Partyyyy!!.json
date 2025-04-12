@@ -1,0 +1,408 @@
+{
+  "eventName": "Birthday Partyyyy!!",
+  "participationFee": 10.0,
+  "categories": [
+    {
+      "name": "Food"
+    },
+    {
+      "name": "Drinks"
+    },
+    {
+      "name": "Activity"
+    },
+    {
+      "name": "Decorations"
+    },
+    {
+      "name": "Gas"
+    }
+  ],
+  "participants": [
+    {
+      "name": "Alice",
+      "expenses": {
+        "Food": 200.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Drinks"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Bob",
+      "expenses": {
+        "Drinks": 100.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Drinks"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "Charlie",
+      "expenses": {
+        "Activity": 150.0
+      },
+      "consumedCategories": [
+        {
+          "name": "Food"
+        },
+        {
+          "name": "Activity"
+        },
+        {
+          "name": "Decorations"
+        }
+      ],
+      "balance": 0.0
+    },
+    {
+      "name": "David",
+      "expenses": {
+        "Decorations": 50.0
+      },
+      "consumedCategories": [],
+      "balance": 0.0
+    },
+    {
+      "name": "Eve",
+      "expenses": {},
+      "consumedCategories": [],
+      "balance": 0.0
+    }
+  ],
+  "debts": [
+    {
+      "debtor": {
+        "name": "Charlie",
+        "expenses": {
+          "Activity": 150.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Activity"
+          },
+          {
+            "name": "Decorations"
+          }
+        ],
+        "balance": 0.0
+      },
+      "creditor": {
+        "name": "David",
+        "expenses": {
+          "Decorations": 50.0
+        },
+        "consumedCategories": [],
+        "balance": 0.0
+      },
+      "amount": 80.0
+    },
+    {
+      "debtor": {
+        "name": "Charlie",
+        "expenses": {
+          "Activity": 150.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Activity"
+          },
+          {
+            "name": "Decorations"
+          }
+        ],
+        "balance": 0.0
+      },
+      "creditor": {
+        "name": "Alice",
+        "expenses": {
+          "Food": 200.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "amount": 57.948717948717956
+    },
+    {
+      "debtor": {
+        "name": "Bob",
+        "expenses": {
+          "Drinks": 100.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "creditor": {
+        "name": "Alice",
+        "expenses": {
+          "Food": 200.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "amount": 61.02564102564102
+    },
+    {
+      "debtor": {
+        "name": "Eve",
+        "expenses": {},
+        "consumedCategories": [],
+        "balance": 0.0
+      },
+      "creditor": {
+        "name": "Alice",
+        "expenses": {
+          "Food": 200.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      "amount": 20.0
+    }
+  ],
+  "totalExpensePerCategory": {
+    "Decorations": 50.0,
+    "Activity": 150.0,
+    "Gas": 150.0,
+    "Drinks": 100.0,
+    "Food": 200.0
+  },
+  "consumedPerCategory": {
+    "Decorations": [
+      {
+        "name": "Charlie",
+        "expenses": {
+          "Activity": 150.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Activity"
+          },
+          {
+            "name": "Decorations"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Activity": [
+      {
+        "name": "Charlie",
+        "expenses": {
+          "Activity": 150.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Activity"
+          },
+          {
+            "name": "Decorations"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Gas": [
+      {
+        "name": "Alice",
+        "expenses": {
+          "Food": 200.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Bob",
+        "expenses": {
+          "Drinks": 100.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Charlie",
+        "expenses": {
+          "Activity": 150.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Activity"
+          },
+          {
+            "name": "Decorations"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Drinks": [
+      {
+        "name": "Alice",
+        "expenses": {
+          "Food": 200.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Bob",
+        "expenses": {
+          "Drinks": 100.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      }
+    ],
+    "Food": [
+      {
+        "name": "Alice",
+        "expenses": {
+          "Food": 200.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Bob",
+        "expenses": {
+          "Drinks": 100.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Drinks"
+          }
+        ],
+        "balance": 0.0
+      },
+      {
+        "name": "Charlie",
+        "expenses": {
+          "Activity": 150.0
+        },
+        "consumedCategories": [
+          {
+            "name": "Food"
+          },
+          {
+            "name": "Activity"
+          },
+          {
+            "name": "Decorations"
+          }
+        ],
+        "balance": 0.0
+      }
+    ]
+  },
+  "expensePerCategory": {
+    "Decorations": {
+      "David": 50.0
+    },
+    "Activity": {
+      "Charlie": 150.0
+    },
+    "Gas": {
+      "Alice": 100.0,
+      "David": 50.0
+    },
+    "Drinks": {
+      "Bob": 100.0
+    },
+    "Food": {
+      "Alice": 200.0
+    }
+  }
+}

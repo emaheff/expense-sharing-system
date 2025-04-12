@@ -2,7 +2,6 @@ package ui;
 
 import logic.Category;
 import logic.Event;
-import logic.EventEditor;
 import logic.Participant;
 
 import java.util.ArrayList;
@@ -69,12 +68,8 @@ public class CategoryInteractionHandler {
             System.out.println("There is no category!");
             return;
         }
-        for (Participant participant: event.getParticipants()) {
-            for (Category expenseCategory: participant.getExpenses().keySet()) {
-                if (expenseCategory.equals(categoryToRemove)) {
-                    participant.getExpenses().remove(expenseCategory);
-                }
-            }
+        for (Participant participant : event.getParticipants()) {
+            participant.getExpenses().keySet().removeIf(expenseCategory -> expenseCategory.equals(categoryToRemove));
             participant.getConsumedCategories().removeIf(consumedCategory -> consumedCategory.equals(categoryToRemove));
         }
     }
@@ -86,7 +81,7 @@ public class CategoryInteractionHandler {
         }
         String newCategoryName = UserInputHandler.getStringInput("Enter a new category that you want to add: ");
         Category newCategory = new Category(newCategoryName);
-        EventEditor.addCategory(event, newCategory);
+        event.addCategory(newCategory);
         addNewCategoryToParticipants(newCategory, event);
     }
 
@@ -95,10 +90,10 @@ public class CategoryInteractionHandler {
 
             if (UserInputHandler.getYesNoInput(String.format("Did %s spent money on %s?", participant.getName(), category.getName()))) {
                 double expense = UserInputHandler.getDoubleInput(String.format("Enter the amount of money that %s spent on %s:%n", participant.getName(), category.getName()));
-                EventEditor.addParticipationExpense(participant, category, expense);
+                participant.getExpenses().put(category, expense);
             }
             if (UserInputHandler.getYesNoInput(String.format("Did %s consumed from %s category?", participant.getName(), category.getName()))) {
-                EventEditor.addParticipantConsumption(participant, category);
+                participant.addConsumedCategory(category);
             }
         }
     }

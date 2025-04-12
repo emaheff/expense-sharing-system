@@ -2,17 +2,29 @@ package logic;
 
 public class Debt {
 
-    private Participant from;
-    private Participant to;
+    private Participant debtor;
+    private Participant creditor;
     private double amount;
 
-    public Debt(Participant from, Participant to, double amount) {
-        this.from = from;
-        this.to = to;
+    public Debt(Participant debtor, Participant creditor, double amount) {
+        this.debtor = debtor;
+        this.creditor = creditor;
         this.amount = amount;
     }
 
+    public Participant getDebtor() {
+        return debtor;
+    }
+
+    public Participant getCreditor() {
+        return creditor;
+    }
+
+    public double getAmount() {
+        return amount;
+    }
+
     public String toString() {
-        return String.format("%s owes %f to %s", from.getName(), amount, to.getName()) ;
+        return String.format("%s owes %.2f to %s", debtor.getName(), amount, creditor.getName()) ;
     }
 }

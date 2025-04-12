@@ -1,8 +1,5 @@
 package logic;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Participant implements Comparable<Participant> {
     private String name;
@@ -18,6 +15,8 @@ public class Participant implements Comparable<Participant> {
     }
 
     public void addExpense(Category category, Double amount) {
+        if (amount < 0.1)
+            return;
         expenses.put(category, amount);
     }
 
@@ -55,6 +54,13 @@ public class Participant implements Comparable<Participant> {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof Participant participant)) return false;
+        return Objects.equals(name, participant.name);
     }
 
     @Override

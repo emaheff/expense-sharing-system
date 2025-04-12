@@ -29,7 +29,7 @@ public class ParticipantInteractionHandler {
         return getParticipantFromNumber(choice, participants);
     }
 
-    private static Participant getParticipantFromNumber(int userNumber, List<Participant> displayedParticipants) {
+    public static Participant getParticipantFromNumber(int userNumber, List<Participant> displayedParticipants) {
         return displayedParticipants.get(userNumber - 1);
     }
 
@@ -42,7 +42,7 @@ public class ParticipantInteractionHandler {
     private static void handleManagerParticipantChoice(int choice, Event event) {
         switch (choice) {
             case 1:
-                handleAddNewParticipant(event);
+                addParticipant(event);
                 break;
             case 2:
                 handleRemoveParticipant(event);
@@ -57,10 +57,6 @@ public class ParticipantInteractionHandler {
         }
     }
 
-    private static void handleAddNewParticipant(Event event) {
-        addParticipant(event);
-    }
-
     private static void handleRemoveParticipant(Event event) {
         Participant participantToRemove = getParticipantFromUser(event, "Enter Participant Number you wants to remove:" +
                 " if there are none enter 0");
@@ -68,7 +64,7 @@ public class ParticipantInteractionHandler {
             System.out.println("There is no participant!");
             return;
         }
-        EventEditor.removeParticipant(event, participantToRemove);
+        event.getParticipants().remove(participantToRemove);
     }
 
     private static void handleEditParticipant(Event event) {
@@ -110,7 +106,7 @@ public class ParticipantInteractionHandler {
             return;
         }
         String newName = UserInputHandler.getStringInput(String.format("Enter new name for %s", participantToRename.getName()));
-        EventEditor.renameParticipant(participantToRename, newName);
+        participantToRename.setName(newName);
     }
 
     private static void handleEditExpensesPerCategory(Participant participant, Event event) {
@@ -197,7 +193,7 @@ public class ParticipantInteractionHandler {
             double amount = UserInputHandler.getDoubleInput("Enter the amount of money you spent on this category.");
 
             // adds the expense to the participant expenses list
-            ParticipantEditor.addExpense(participant, expenseCategory, amount);
+            participant.addExpense(expenseCategory, amount);
 
 
 
@@ -235,7 +231,7 @@ public class ParticipantInteractionHandler {
             }
 
             Category consumedCategory = CategoryInteractionHandler.getCategoryFromNumber(choice, displayCategories);
-            ParticipantEditor.addConsumedCategory(participant, consumedCategory);
+            participant.addConsumedCategory(consumedCategory);
 
             if (!UserInputHandler.getYesNoInput("Are there more categories that the participant consumed?")) {
                 isMoreCategory = false;

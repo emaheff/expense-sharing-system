@@ -17,7 +17,7 @@ public class CalculationEngine {
         // Step 2: Determine creditors and debtors based on net balances
         List<Participant> creditors = new ArrayList<>();
         List<Participant> debtors = new ArrayList<>();
-        calculateNetBalances(totalExpenseByParticipant, totalConsumedByParticipant, creditors, debtors, event.getParticipationFee());
+        calculateNetBalances(totalExpenseByParticipant, totalConsumedByParticipant, creditors, debtors, event.getParticipationFee(), event);
 
         // Step 3: Generate final list of debts
         event.setDebts(generateDebts(creditors, debtors));
@@ -112,9 +112,10 @@ public class CalculationEngine {
             Map<Participant, Double> totalExpensesByParticipant,
             Map<Participant, Double> totalConsumedByParticipant,
             List<Participant> creditors,
-            List<Participant> debtors, double participationFee
+            List<Participant> debtors, double participationFee,
+            Event event
     ) {
-        for (Participant participant : totalExpensesByParticipant.keySet()) {
+        for (Participant participant : event.getParticipants()) {
             double paid = totalExpensesByParticipant.getOrDefault(participant, 0.0);
             double consumed = totalConsumedByParticipant.getOrDefault(participant, 0.0);
             double netBalance = paid - (consumed + participationFee);
@@ -135,29 +136,36 @@ public class CalculationEngine {
     private List<Debt> generateDebts(List<Participant> creditors, List<Participant> debtors) {
         List<Debt> debts = new ArrayList<>();
 
+        // Temporary balances to avoid modifying the original participants
+        Map<Participant, Double> tempBalances = new HashMap<>();
+        creditors.forEach(c -> tempBalances.put(c, c.getBalance()));
+        debtors.forEach(d -> tempBalances.put(d, d.getBalance()));
+
         while (!creditors.isEmpty() && !debtors.isEmpty()) {
             Participant creditor = creditors.get(0);
             Participant debtor = debtors.get(0);
 
-            double amountToReceive = creditor.getBalance();
-            double amountToPay = -debtor.getBalance();
+            double amountToReceive = tempBalances.get(creditor);
+            double amountToPay = -tempBalances.get(debtor);
 
             double transferAmount = Math.min(amountToReceive, amountToPay);
 
             debts.add(new Debt(debtor, creditor, transferAmount));
 
-            creditor.setBalance(creditor.getBalance() - transferAmount);
-            debtor.setBalance(debtor.getBalance() + transferAmount);
+            // Update temporary balances instead of real participant balance
+            tempBalances.put(creditor, tempBalances.get(creditor) - transferAmount);
+            tempBalances.put(debtor, tempBalances.get(debtor) + transferAmount);
 
-            if (Math.abs(creditor.getBalance()) < 0.1) {
+            if (Math.abs(tempBalances.get(creditor)) < 0.1) {
                 creditors.remove(0);
             }
 
-            if (Math.abs(debtor.getBalance()) < 0.1) {
+            if (Math.abs(tempBalances.get(debtor)) < 0.1) {
                 debtors.remove(0);
             }
         }
 
         return debts;
     }
+
 }

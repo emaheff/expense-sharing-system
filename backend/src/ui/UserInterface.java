@@ -93,7 +93,7 @@ public class UserInterface {
             return;
         }
         double fee = UserInputHandler.getDoubleInput("Enter new participation fee: ");
-        EventEditor.setParticipationFee(currentEvent, fee);
+        currentEvent.setParticipationFee(fee);
     }
 
     private void renameEvent() {
@@ -103,7 +103,7 @@ public class UserInterface {
             return;
         }
         String newEventName = UserInputHandler.getStringInput("Enter a new name for this event: ");
-        EventEditor.renameEvent(currentEvent, newEventName);
+        currentEvent.setEventName(newEventName);
     }
 
     private void createEvent() {
@@ -203,7 +203,7 @@ public class UserInterface {
             return;
         }
 
-        System.out.println("=== Event Results: " + currentEvent.getEventName() + " ===");
+        System.out.println("=== Event Results: " + currentEvent.getEventName() + " ===\nParticipation Fee: " + currentEvent.getParticipationFee() + "\n");
 
         calculationEngine.calculateBalances(currentEvent);
 
