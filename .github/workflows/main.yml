@@ -23,3 +23,12 @@ jobs:
         run: ./gradlew test
       - name: Generate Coverage Report
         run: ./gradlew jacocoTestReport
+      - name: Build jar
+        run: ./gradlew jar
+
+      - name: Upload jar as artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: expense-sharing-system
+          path: build/libs/*.jar
+
