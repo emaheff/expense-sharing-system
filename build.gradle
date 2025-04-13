@@ -20,8 +20,11 @@ test {
 }
 
 jacocoTestReport {
+    executionData fileTree(dir: '.', include: 'usage-coverage.exec')
+
     reports {
         html.required = true
+        html.destination file("docs/usage-coverage-report")
     }
 }
 
@@ -31,5 +34,29 @@ sourceSets {
     }
     test {
         java.srcDirs = ['backend/tests']
+    }
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'Main'
+        )
+    }
+
+    from {
+        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+    }
+}
+
+task usageCoverageReport(type: JacocoReport) {
+    executionData fileTree(dir: '.', include: 'usage-coverage.exec')
+
+    sourceDirectories.setFrom files(sourceSets.main.allSource.srcDirs)
+    classDirectories.setFrom files(sourceSets.main.output)
+
+    reports {
+        html.required = true
+        html.destination file("docs/usage-coverage-report")
     }
 }

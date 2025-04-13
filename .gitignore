@@ -14,3 +14,16 @@ build/
 # OS files
 .DS_Store
 Thumbs.db
+
+# Coverage reports
+docs/test-coverage-report/
+docs/usage-coverage-report/
+
+# Jacoco exec files
+*.exec
+
+# Json Events Files
+docs/events
+
+# Tools
+tools
