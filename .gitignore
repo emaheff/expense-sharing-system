@@ -1,6 +1,8 @@
 # IntelliJ
 .idea/
 *.iml
+*.puml
+
 
 # Build
 /out/
@@ -31,3 +33,7 @@ docs/events
 
 # Tools
 tools
+
+# Docker
+docker/postgres-data/
+docker/*.log
