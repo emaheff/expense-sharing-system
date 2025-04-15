@@ -8,6 +8,7 @@ version '1.0-SNAPSHOT'
 
 repositories {
     mavenCentral()
+    maven { url 'https://repo1.maven.org/maven2/' }
 }
 
 dependencies {
@@ -17,10 +18,27 @@ dependencies {
 
 test {
     useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.10"
 }
 
 jacocoTestReport {
-    executionData fileTree(dir: '.', include: 'usage-coverage.exec')
+    executionData fileTree(dir: '.', include: 'build/jacoco/test.exec')
+
+    reports {
+        html.required = true
+        html.destination file("docs/test-coverage-report")
+    }
+}
+
+task usageCoverageReport(type: JacocoReport) {
+    executionData fileTree(dir: '.', include: 'usage.exec')
+
+    sourceDirectories.setFrom files(sourceSets.main.allSource.srcDirs)
+    classDirectories.setFrom files(sourceSets.main.output)
 
     reports {
         html.required = true
@@ -46,17 +64,5 @@ jar {
 
     from {
         configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
-    }
-}
-
-task usageCoverageReport(type: JacocoReport) {
-    executionData fileTree(dir: '.', include: 'usage-coverage.exec')
-
-    sourceDirectories.setFrom files(sourceSets.main.allSource.srcDirs)
-    classDirectories.setFrom files(sourceSets.main.output)
-
-    reports {
-        html.required = true
-        html.destination file("docs/usage-coverage-report")
     }
 }

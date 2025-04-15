@@ -7,6 +7,10 @@
 target/
 build/
 .gradle/
+/docs/test-coverage-report/
+/docs/usage-coverage-report/
+/*.exec
+/gradle/wrapper/gradle-wrapper.jar
 
 # Logs
 *.log
