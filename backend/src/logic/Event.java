@@ -13,6 +13,7 @@ public class Event {
     private Map<Category, Double> totalExpensePerCategory;
     private Map<Category, List<Participant>> consumedPerCategory;
     private Map<Category, Map<Participant, Double>> expensePerCategory;
+    private int id;
 
     public Event(String name, double participationFee) {
         this.eventName = name;
@@ -64,6 +65,14 @@ public class Event {
 
     public void setParticipationFee(double amount) {
         this.participationFee = amount;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Map<Category, List<Participant>> getConsumedPerCategory() {

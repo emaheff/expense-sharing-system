@@ -6,12 +6,17 @@ public class Participant implements Comparable<Participant> {
     private Map<Category, Double> expenses;
     private List<Category> consumedCategories;
     private double balance;
+    private String email;
+    private String phoneNumber;
+    private int id;
 
     public Participant(String name) {
         this.name = name;
         this.expenses = new HashMap<>();
         this.consumedCategories = new ArrayList<>();
         this.balance = 0.0;
+        email = "";
+        phoneNumber = "";
     }
 
     public void addExpense(Category category, Double amount) {
@@ -27,6 +32,10 @@ public class Participant implements Comparable<Participant> {
     public String getName() {
         return name;
     }
+
+    public String getEmail() {return email;}
+
+    public String getPhoneNumber() {return phoneNumber;}
 
     public Map<Category, Double> getExpenses() {
         return expenses;
@@ -52,8 +61,24 @@ public class Participant implements Comparable<Participant> {
         return balance;
     }
 
+    public int getId() {
+        return id;
+    }
+
     public void setName(String name) {
         this.name = name;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

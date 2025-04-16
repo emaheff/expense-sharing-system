@@ -12,7 +12,6 @@ build/
 /docs/test-coverage-report/
 /docs/usage-coverage-report/
 /*.exec
-/gradle/wrapper/gradle-wrapper.jar
 
 # Logs
 *.log
@@ -25,8 +24,7 @@ Thumbs.db
 docs/test-coverage-report/
 docs/usage-coverage-report/
 
-# Jacoco exec files
-*.exec
+
 
 # Json Events Files
 docs/events

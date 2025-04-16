@@ -43,23 +43,6 @@ public class StorageManager {
             .setPrettyPrinting()
             .create();
 
-    public boolean saveEventToFile(Event event) {
-        ensureEventsDirectoryExists();
-
-        Path filePath = getEventFilePath(event.getEventName());
-
-        return writeJsonToFile(event, filePath);
-    }
-
-    private void ensureEventsDirectoryExists() {
-        Path eventsDirectory = Paths.get("docs", "events");
-        try {
-            Files.createDirectories(eventsDirectory);
-        } catch (IOException e) {
-            System.out.println("Failed to create events directory: " + e.getMessage());
-        }
-    }
-
     public boolean doesEventFileExist(String eventName) {
         Path filePath = getEventFilePath(eventName);
         return Files.exists(filePath);

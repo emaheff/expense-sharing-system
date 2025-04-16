@@ -1,6 +1,8 @@
 package ui;
 
 import logic.*;
+import storage.EventDao;
+import storage.ParticipantDao;
 import storage.StorageManager;
 
 import java.util.List;
@@ -153,11 +155,12 @@ public class UserInterface {
             }
         }
 
-        boolean success = storage.saveEventToFile(currentEvent);
-        if (success) {
-            System.out.printf("Event \"%s\" saved successfully.%n", eventName);
+        boolean dbSuccess = EventDao.insertOrUpdateEvent(currentEvent);
+        if (dbSuccess) {
+            ParticipantDao.saveEventParticipants(currentEvent);
+            System.out.println("Event also saved to database.");
         } else {
-            System.out.printf("Failed to save event \"%s\".%n", eventName);
+            System.out.println("Failed to save event to database.");
         }
     }
 
