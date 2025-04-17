@@ -163,6 +163,11 @@ public class ParticipantInteractionHandler {
     private static void addParticipant(Event event) {
         String name = UserInputHandler.getStringInput("Enter Participant Name:");
         Participant participant = new Participant(name);
+
+        String phone = UserInputHandler.getStringInput("Enter Participant Phone Number:");
+        participant.setPhoneNumber(phone);
+        String email = UserInputHandler.getStringInput("Enter Participant email");
+        participant.setEmail(email);
         // ask the user to enter the categories that need to add to the participant expenses
         enterExpensesCategories(participant, event.getCategories());
         enterConsumedCategories(participant, event.getCategories());

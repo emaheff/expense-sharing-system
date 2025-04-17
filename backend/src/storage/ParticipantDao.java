@@ -1,13 +1,21 @@
 package storage;
 
+import logic.Category;
 import logic.Event;
 import logic.Participant;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ParticipantDao {
 
     private static int getOrCreateParticipant(Participant participant) {
+
+        if (participant.getName() == null || participant.getName().isBlank()) {
+            throw new IllegalArgumentException("Participant name cannot be null or empty");
+        }
+
         String selectSql = "SELECT id FROM participants WHERE phone = ?";
         String insertSql = "INSERT INTO participants (name, phone, email) VALUES (?, ?, ?)";
 
@@ -50,7 +58,7 @@ public class ParticipantDao {
     }
 
     private static void linkParticipantToEvent(int participantId, int eventId) {
-        String sql = "INSERT INTO event_participants (event_id, participant_id) VALUES (?, ?)";
+        String sql = "INSERT INTO event_participants (event_id, participant_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
@@ -73,12 +81,116 @@ public class ParticipantDao {
 
         for (Participant participant : event.getParticipants()) {
             try {
-                int participantId = ParticipantDao.getOrCreateParticipant(participant);
-                ParticipantDao.linkParticipantToEvent(participantId, eventId);
+                int participantId = getOrCreateParticipant(participant);
+                linkParticipantToEvent(participantId, eventId);
             } catch (Exception e) {
                 System.err.println("Failed to save/link participant: " + participant.getName() + ". Reason: " + e.getMessage());
             }
         }
     }
+
+    public static List<Participant> getParticipantsForEvent(int eventId) {
+        List<Participant> participants = new ArrayList<>();
+        String sql = """
+        SELECT p.id, p.name, p.phone, p.email
+        FROM participants p
+        JOIN event_participants ep ON p.id = ep.participant_id
+        WHERE ep.event_id = ?
+    """;
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, eventId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                Participant participant = new Participant(rs.getString("name"));
+                participant.setId(rs.getInt("id"));
+                participant.setPhoneNumber(rs.getString("phone"));
+                participant.setEmail(rs.getString("email"));
+                participants.add(participant);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Failed to load participants for event: " + e.getMessage());
+        }
+
+        List<Category> categories = CategoryDao.getCategoriesForEvent(eventId);
+        loadParticipantConsumptions(participants, eventId, categories);
+        loadParticipantExpenses(participants, eventId, categories);
+
+        return participants;
+    }
+
+    private static void loadParticipantConsumptions(List<Participant> participants, int eventId, List<Category> categories) {
+        String sql = """
+        SELECT participant_id, category_id
+        FROM consumptions
+        WHERE event_id = ?
+    """;
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, eventId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int participantId = rs.getInt("participant_id");
+                int categoryId = rs.getInt("category_id");
+
+                Participant participant = findParticipantById(participants, participantId);
+                Category category = CategoryDao.findCategoryById(categories, categoryId);
+
+                if (participant != null && category != null) {
+                    participant.getConsumedCategories().add(category);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Failed to load participant consumptions: " + e.getMessage());
+        }
+    }
+
+
+    private static void loadParticipantExpenses(List<Participant> participants, int eventId, List<Category> categories) {
+        String sql = """
+        SELECT participant_id, category_id, amount
+        FROM expenses
+        WHERE event_id = ?
+    """;
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, eventId);
+            ResultSet rs = stmt.executeQuery();
+
+            while (rs.next()) {
+                int participantId = rs.getInt("participant_id");
+                int categoryId = rs.getInt("category_id");
+                double amount = rs.getDouble("amount");
+
+                Participant participant = findParticipantById(participants, participantId);
+                Category category = CategoryDao.findCategoryById(categories, categoryId);
+
+                if (participant != null && category != null) {
+                    participant.getExpenses().put(category, amount);
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Failed to load participant expenses: " + e.getMessage());
+        }
+    }
+
+    public static Participant findParticipantById(List<Participant> participants, int id) {
+        for (Participant participant : participants) {
+            if (participant.getId() == id) return participant;
+        }
+        return null;
+    }
+
 
 }

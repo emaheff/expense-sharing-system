@@ -43,11 +43,6 @@ public class StorageManager {
             .setPrettyPrinting()
             .create();
 
-    public boolean doesEventFileExist(String eventName) {
-        Path filePath = getEventFilePath(eventName);
-        return Files.exists(filePath);
-    }
-
     private Path getEventFilePath(String eventName) {
         return EVENTS_DIRECTORY.resolve(eventName + ".json");
     }
@@ -55,17 +50,6 @@ public class StorageManager {
     private File getEventsDirectoryFile() {
         return EVENTS_DIRECTORY.toFile();
     }
-
-    private boolean writeJsonToFile(Event event, Path filePath) {
-        try {
-            String json = gson.toJson(event);
-            Files.write(filePath, json.getBytes());
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
-    }
-
 
     public List<String> getSavedEventNames() {
         List<String> eventNames = new ArrayList<>();

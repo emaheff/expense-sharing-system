@@ -1,8 +1,6 @@
 package logic;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.time.LocalDate;
+import java.util.*;
 
 public class Event {
     private String eventName;
@@ -14,6 +12,7 @@ public class Event {
     private Map<Category, List<Participant>> consumedPerCategory;
     private Map<Category, Map<Participant, Double>> expensePerCategory;
     private int id;
+    private LocalDate date;
 
     public Event(String name, double participationFee) {
         this.eventName = name;
@@ -67,6 +66,19 @@ public class Event {
         this.participationFee = amount;
     }
 
+    public void setDate(LocalDate date) {
+        this.date = date;
+    }
+
+    public void setParticipants(List<Participant> participants) {
+        this.participants = participants;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
+
     public int getId() {
         return id;
     }
@@ -86,6 +98,11 @@ public class Event {
     public Map<Category, Double> getTotalExpensePerCategory() {
         return totalExpensePerCategory;
     }
+
+    public LocalDate getDate() {
+        return date;
+    }
+
 
     @Override
     public String toString() {

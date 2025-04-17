@@ -1,9 +1,7 @@
 package ui;
 
 import logic.*;
-import storage.EventDao;
-import storage.ParticipantDao;
-import storage.StorageManager;
+import storage.*;
 
 import java.util.List;
 import java.util.Map;
@@ -145,19 +143,13 @@ public class UserInterface {
             return;
         }
 
-        StorageManager storage = new StorageManager();
-        String eventName = currentEvent.getEventName();
-
-        if (storage.doesEventFileExist(eventName)) {
-            if (!UserInputHandler.getYesNoInput(String.format("A file named \"%s.json\" already exists. Overwrite? (yes/no): ", eventName))) {
-                System.out.println("Save cancelled.");
-                return;
-            }
-        }
-
         boolean dbSuccess = EventDao.insertOrUpdateEvent(currentEvent);
         if (dbSuccess) {
             ParticipantDao.saveEventParticipants(currentEvent);
+            CategoryDao.saveEventCategories(currentEvent);
+            DebtDao.saveEventDebts(currentEvent);
+            ExpenseDao.saveEventExpenses(currentEvent);
+            ExpenseDao.saveEventConsumptions(currentEvent);
             System.out.println("Event also saved to database.");
         } else {
             System.out.println("Failed to save event to database.");
@@ -165,8 +157,7 @@ public class UserInterface {
     }
 
     private void loadEventFlow() {
-        StorageManager storage = new StorageManager();
-        List<String> savedEvents = storage.getSavedEventNames();
+        List<EventDao.EventSummary> savedEvents = EventDao.getAllEvents();
 
         if (savedEvents.isEmpty()) {
             System.out.println("No saved events found.");
@@ -186,8 +177,9 @@ public class UserInterface {
             return;
         }
 
-        String selectedEventName = savedEvents.get(choice - 1);
-        Event event = storage.loadEventByName(selectedEventName);
+        int selectedEventId = savedEvents.get(choice - 1).getId();
+        String selectedEventName = savedEvents.get(choice - 1).getName();
+        Event event = EventDao.loadEventById(selectedEventId);
 
         if (event != null) {
             event.finalizeCalculations();
@@ -197,6 +189,7 @@ public class UserInterface {
             System.out.println("Failed to load event.");
         }
     }
+
 
     private void showResultsForCurrentEvent() {
         Event currentEvent = eventManager.getCurrentEvent();
