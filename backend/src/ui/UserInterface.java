@@ -47,6 +47,9 @@ public class UserInterface {
                 handleEditEvent();
                 break;
             case 6:
+                deleteEvent();
+                break;
+            case 7:
                 System.out.println("Exiting. Goodbye!");
                 isRunning = false;
                 break;
@@ -190,6 +193,9 @@ public class UserInterface {
         }
     }
 
+    private void deleteEvent() {
+        EventDao.deleteEventById(eventManager.getCurrentEvent().getId());
+    }
 
     private void showResultsForCurrentEvent() {
         Event currentEvent = eventManager.getCurrentEvent();

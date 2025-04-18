@@ -85,12 +85,18 @@ public class ParticipantInteractionHandler {
                 handleRenameParticipant(event);
                 break;
             case 2:
-                handleEditExpensesPerCategory(participant, event);
+                handlePhoneNumberEdit(event);
                 break;
             case 3:
-                handleEditConsumedCategories(participant, event);
+                handleEmailAddressEdit(event);
                 break;
             case 4:
+                handleEditExpensesPerCategory(participant, event);
+                break;
+            case 5:
+                handleEditConsumedCategories(participant, event);
+                break;
+            case 6:
                 handleManageParticipants(event);
                 break;
             default:
@@ -243,5 +249,27 @@ public class ParticipantInteractionHandler {
             }
         }
 
+    }
+
+    private static void handlePhoneNumberEdit(Event event) {
+        Participant participantToEdit = getParticipantFromUser(event, "Enter Participant Number you wants to edit it's phone number:" +
+                " if there are none enter 0");
+        if (participantToEdit == null) {
+            System.out.println("There is no participant!");
+            return;
+        }
+        String newPhoneNumber = UserInputHandler.getStringInput(String.format("Enter new phone number for %s", participantToEdit.getName()));
+        participantToEdit.setPhoneNumber(newPhoneNumber);
+    }
+
+    private static void handleEmailAddressEdit(Event event) {
+        Participant participantToEdit = getParticipantFromUser(event, "Enter Participant Number you wants to edit it's email address:" +
+                " if there are none enter 0");
+        if (participantToEdit == null) {
+            System.out.println("There is no participant!");
+            return;
+        }
+        String newEmail = UserInputHandler.getStringInput(String.format("Enter new email address for %s", participantToEdit.getName()));
+        participantToEdit.setEmail(newEmail);
     }
 }

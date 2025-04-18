@@ -98,6 +98,23 @@ public class EventDao {
         return null;
     }
 
+    public static boolean deleteEventById(int eventId) {
+        String sql = "DELETE FROM events WHERE id = ?";
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, eventId);
+            int rowsAffected = stmt.executeUpdate();
+            return rowsAffected > 0;
+
+        } catch (SQLException e) {
+            System.err.println("Failed to delete event: " + e.getMessage());
+            return false;
+        }
+    }
+
+
 
     public static class EventSummary {
         private final int id;

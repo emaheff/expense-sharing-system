@@ -26,14 +26,16 @@ public class Category {
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
-        if (!(o instanceof Category category)) return false;
-        return Objects.equals(name, category.name);
+        if (!(o instanceof Category)) return false;
+        Category other = (Category) o;
+        return this.id == other.id;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name);
+        return Objects.hash(id);
     }
+
 
     @Override
     public String toString() {

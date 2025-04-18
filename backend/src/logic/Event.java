@@ -166,4 +166,17 @@ public class Event {
         CalculationEngine engine = new CalculationEngine();
         engine.calculateBalances(this);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Event)) return false;
+        Event other = (Event) o;
+        return this.id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }

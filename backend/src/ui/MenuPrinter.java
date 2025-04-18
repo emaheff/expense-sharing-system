@@ -15,7 +15,8 @@ public class MenuPrinter {
         System.out.println("3. Save current event");
         System.out.println("4. Show event results");
         System.out.println("5. Edit current event");
-        System.out.println("6. Exit");
+        System.out.println("6. Delete current event");
+        System.out.println("7. Exit");
     }
 
     public static void displayManageParticipantMenu() {
@@ -32,9 +33,11 @@ public class MenuPrinter {
         System.out.println("=== Edit Participant: " + participant.getName() + " ===");
         System.out.println("""
                 1. Rename participant
-                2. Edit expenses per category
-                3. Edit consumed categories
-                4. Back to previous menu
+                2. Edit phone number
+                3. Edit email address
+                4. Edit expenses per category
+                5. Edit consumed categories
+                6. Back to previous menu
                 """);
     }
 
