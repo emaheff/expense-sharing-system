@@ -3,6 +3,7 @@ package logic;
 import org.junit.jupiter.api.*;
 
 import javax.lang.model.type.PrimitiveType;
+import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,7 +52,8 @@ class CalculationEngineTest {
         charlie.addConsumedCategory(decoration);
 
 
-        event = new Event("Birthday Party", 10.0);
+        LocalDate date = LocalDate.of(2023, 8, 5);
+        event = new Event("Birthday Party", 10.0, date);
         event.addCategory(food);
         event.addCategory(drinks);
         event.addCategory(activity);

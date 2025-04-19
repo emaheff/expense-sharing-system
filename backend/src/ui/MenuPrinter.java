@@ -73,10 +73,11 @@ public class MenuPrinter {
         System.out.println("""
                 === Edit Event ===
                 1. Rename event
-                2. Change participation fee
-                3. Manage categories
-                4. Manage participants
-                5. Back to main menu
+                2. Edit event date
+                3. Change participation fee
+                4. Manage categories
+                5. Manage participants
+                6. Back to main menu
                 """);
     }
 }

@@ -3,6 +3,9 @@ package ui;
 import logic.*;
 import storage.*;
 
+import java.time.DateTimeException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
@@ -62,7 +65,6 @@ public class UserInterface {
         MenuPrinter.displayEditMenu();
         int choice = UserInputHandler.getIntInput("Your choice: ");
         handleEditEventChoice(choice);
-
     }
 
     private void handleEditEventChoice(int choice) {
@@ -71,22 +73,31 @@ public class UserInterface {
                 renameEvent();
                 break;
             case 2:
-                editParticipationFee();
+                editEventDate();
                 break;
             case 3:
+                editParticipationFee();
+                break;
+            case 4:
                 CategoryInteractionHandler.handleManageCategories(eventManager.getCurrentEvent());
                 handleEditEvent();
                 break;
-            case 4:
+            case 5:
                 ParticipantInteractionHandler.handleManageParticipants(eventManager.getCurrentEvent());
                 handleEditEvent();
                 break;
-            case 5:
+            case 6:
                 start();
                 break;
             default:
                 System.out.println("Invalid option. Please try again.");
         }
+    }
+
+    private void editEventDate() {
+        String stringDate = UserInputHandler.getStringInput("Enter date (dd/MM/yyyy): ");
+        LocalDate date = localDateFromString(stringDate);
+        eventManager.getCurrentEvent().setDate(date);
     }
 
     private void editParticipationFee() {
@@ -113,8 +124,10 @@ public class UserInterface {
 
         System.out.println("=== Create New Event ===");
         String name = UserInputHandler.getStringInput("Enter event name: ");
+        String stringDate = UserInputHandler.getStringInput("Enter date (dd/MM/yyyy): ");
+        LocalDate date = localDateFromString(stringDate);
         double fee = UserInputHandler.getDoubleInput("Enter new participation fee: ");
-        Event newEvent = new Event(name, fee);
+        Event newEvent = new Event(name, fee, date);
 
         defineCategories(newEvent); // Define consumed/expenses categories for this new event
         eventManager.createEvent(newEvent);
@@ -216,6 +229,19 @@ public class UserInterface {
         System.out.println("=============================");
 
         System.out.println("=============================");
+    }
+
+    private LocalDate localDateFromString(String stringDate) {
+        LocalDate date = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        while (date == null) {
+            try {
+                date = LocalDate.parse(stringDate, formatter);
+            } catch (DateTimeException e) {
+                System.out.println("Invalid date. Please use format dd/MM/yyyy and enter a real date.");
+            }
+        }
+        return date;
     }
 
 }

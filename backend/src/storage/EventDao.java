@@ -4,6 +4,7 @@ import logic.Event;
 import logic.Participant;
 
 import java.sql.*;
+import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -11,16 +12,17 @@ import java.util.List;
 public class EventDao {
 
     public static boolean insertOrUpdateEvent(Event event) {
-        String insertSql = "INSERT INTO events (name, date, participation_fee) VALUES (?, CURRENT_DATE, ?)";
-        String updateSql = "UPDATE events SET name = ?, participation_fee = ? WHERE id = ?";
+        String insertSql = "INSERT INTO events (name, date, participation_fee) VALUES (?, ?, ?)";
+        String updateSql = "UPDATE events SET name = ?, date = ?, participation_fee = ? WHERE id = ?";
 
         try (Connection conn = DatabaseManager.getConnection()) {
             if (event.getId() != 0) {
                 // UPDATE
                 try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
                     stmt.setString(1, event.getEventName());
-                    stmt.setDouble(2, event.getParticipationFee());
-                    stmt.setInt(3, event.getId());
+                    stmt.setDate(2, Date.valueOf(event.getDate()));
+                    stmt.setDouble(3, event.getParticipationFee());
+                    stmt.setInt(4, event.getId());
                     int rowsUpdated = stmt.executeUpdate();
                     return rowsUpdated > 0;
                 }
@@ -28,7 +30,8 @@ public class EventDao {
                 // INSERT
                 try (PreparedStatement stmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
                     stmt.setString(1, event.getEventName());
-                    stmt.setDouble(2, event.getParticipationFee());
+                    stmt.setDate(2, Date.valueOf(event.getDate()));
+                    stmt.setDouble(3, event.getParticipationFee());
                     stmt.executeUpdate();
 
                     ResultSet rs = stmt.getGeneratedKeys();
@@ -81,8 +84,7 @@ public class EventDao {
                 LocalDate date = rs.getDate("date").toLocalDate();
                 double fee = rs.getDouble("participation_fee");
 
-                Event event = new Event(name, fee);
-                event.setDate(date);
+                Event event = new Event(name, fee, date);
                 event.setId(eventId);
                 List<Participant> eventParticipants = ParticipantDao.getParticipantsForEvent(eventId);
                 event.setParticipants(eventParticipants);
@@ -113,8 +115,6 @@ public class EventDao {
             return false;
         }
     }
-
-
 
     public static class EventSummary {
         private final int id;

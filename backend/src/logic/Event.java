@@ -14,7 +14,7 @@ public class Event {
     private int id;
     private LocalDate date;
 
-    public Event(String name, double participationFee) {
+    public Event(String name, double participationFee, LocalDate date) {
         this.eventName = name;
         this.participationFee = participationFee;
         this.categories = new ArrayList<>();
@@ -23,6 +23,7 @@ public class Event {
         this.totalExpensePerCategory = new HashMap<>();
         this.consumedPerCategory = new HashMap<>();
         this.expensePerCategory = new HashMap<>();
+        this.date = date;
     }
 
     public void addParticipant(Participant participant) {

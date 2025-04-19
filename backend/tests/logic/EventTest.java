@@ -1,5 +1,6 @@
 package logic;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,8 @@ public class EventTest {
         david.addExpense(drinks, 0.0); // Should not appear because it's 0
         alice.addExpense(food, 50.0);
 
-        event = new Event("BBQ", 10.0);
+        LocalDate date = LocalDate.of(2023, 8, 5);
+        event = new Event("BBQ", 10.0, date);
         event.addCategory(food);
         event.addCategory(drinks);
         event.addParticipant(david);

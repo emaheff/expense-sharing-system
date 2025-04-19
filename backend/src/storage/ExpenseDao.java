@@ -5,7 +5,6 @@ import logic.Event;
 import logic.Participant;
 
 import java.sql.*;
-import java.util.List;
 import java.util.Map;
 
 public class ExpenseDao {

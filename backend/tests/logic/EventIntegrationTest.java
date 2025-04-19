@@ -5,6 +5,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 
@@ -33,7 +34,8 @@ public class EventIntegrationTest {
         david.addConsumedCategory(food);
         alice.addConsumedCategory(food);
 
-        event = new Event("BBQ", 10.0);
+        LocalDate date = LocalDate.of(2023, 8, 5);
+        event = new Event("BBQ", 10.0, date);
         event.addCategory(food);
         event.addCategory(drinks);
         event.addParticipant(david);

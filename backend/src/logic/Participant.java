@@ -81,6 +81,10 @@ public class Participant implements Comparable<Participant> {
         this.id = id;
     }
 
+    public void setConsumedCategories(List<Category> consumedCategories) {
+        this.consumedCategories = consumedCategories;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -97,5 +101,10 @@ public class Participant implements Comparable<Participant> {
     @Override
     public int compareTo(Participant other) {
         return Double.compare(this.balance, other.balance);
+    }
+
+    @Override
+    public String toString() {
+        return "Participant name: " + name + " Participant id: " + id;
     }
 }
