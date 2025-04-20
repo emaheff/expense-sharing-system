@@ -10,7 +10,7 @@ import java.util.List;
 
 public class CategoryDao {
 
-    public static int getOrCreateCategory(Category category) {
+    private static int getOrCreateCategory(Category category) {
         if (category.getName() == null || category.getName().isBlank()) {
             throw new IllegalArgumentException("Category name cannot be null or empty");
         }

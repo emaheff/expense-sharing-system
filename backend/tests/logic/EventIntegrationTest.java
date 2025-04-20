@@ -22,8 +22,8 @@ public class EventIntegrationTest {
 
     @BeforeEach
     void setUp() {
-        david = new Participant("David");
-        alice = new Participant("Alice");
+        david = new Participant("David", "123654123");
+        alice = new Participant("Alice", "123653214");
 
         food = new Category("Food");
         drinks = new Category("Drinks");

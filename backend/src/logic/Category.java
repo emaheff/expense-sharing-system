@@ -28,12 +28,20 @@ public class Category {
         if (this == o) return true;
         if (!(o instanceof Category)) return false;
         Category other = (Category) o;
-        return this.id == other.id;
+
+        if (this.id != 0 && other.id != 0) {
+            return this.id == other.id;
+        }
+
+        return Objects.equals(this.name, other.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (id != 0) {
+            return Objects.hash(id);
+        }
+        return Objects.hash(name);
     }
 
 

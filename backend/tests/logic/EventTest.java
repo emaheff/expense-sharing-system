@@ -23,8 +23,8 @@ public class EventTest {
 
     @BeforeEach
     void setUp() {
-        david = new Participant("David");
-        alice = new Participant("Alice");
+        david = new Participant("David", "056664825");
+        alice = new Participant("Alice", "123456222");
 
         food = new Category("Food");
         drinks = new Category("Drinks");
@@ -34,8 +34,7 @@ public class EventTest {
         david.addExpense(drinks, 0.0); // Should not appear because it's 0
         alice.addExpense(food, 50.0);
 
-        LocalDate date = LocalDate.of(2023, 8, 5);
-        event = new Event("BBQ", 10.0, date);
+        event = new Event("BBQ", 10.0, LocalDate.of(2024, 4, 20));
         event.addCategory(food);
         event.addCategory(drinks);
         event.addParticipant(david);
@@ -59,6 +58,7 @@ public class EventTest {
 
         // Arrange
         event.fillExpensePerCategory();
+
 
         // Act
         Map<Category, Map<Participant, Double>> result = event.getExpensePerCategory();

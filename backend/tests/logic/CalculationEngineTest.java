@@ -25,11 +25,11 @@ class CalculationEngineTest {
 
     @BeforeEach
     void setUp() {
-        david = new Participant("David");
-        alice = new Participant("Alice");
-        bob = new Participant("Bob");
-        charlie = new Participant("Charlie");
-        eve = new Participant("Eve");
+        david = new Participant("David", "123456789");
+        alice = new Participant("Alice", "987654321");
+        bob = new Participant("Bob", "321123654789");
+        charlie = new Participant("Charlie", "987456321");
+        eve = new Participant("Eve", "741258963");
 
         food = new Category("Food");
         drinks = new Category("Drinks");

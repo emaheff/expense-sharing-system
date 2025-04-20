@@ -10,13 +10,22 @@ public class Participant implements Comparable<Participant> {
     private String phoneNumber;
     private int id;
 
+    public Participant(String name, String phoneNumber) {
+        this.name = name;
+        this.expenses = new HashMap<>();
+        this.consumedCategories = new ArrayList<>();
+        this.balance = 0.0;
+        email = "";
+        this.phoneNumber = phoneNumber;
+    }
+
     public Participant(String name) {
         this.name = name;
         this.expenses = new HashMap<>();
         this.consumedCategories = new ArrayList<>();
         this.balance = 0.0;
         email = "";
-        phoneNumber = "";
+        this.phoneNumber = "";
     }
 
     public void addExpense(Category category, Double amount) {
@@ -90,12 +99,19 @@ public class Participant implements Comparable<Participant> {
         if (this == o) return true;
         if (!(o instanceof Participant)) return false;
         Participant other = (Participant) o;
-        return this.id == other.id;
+        if (this.id != 0 && other.id != 0) {
+            return this.id == other.id;
+        }
+
+        return Objects.equals(this.phoneNumber, other.phoneNumber);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        if (id != 0) {
+            return Objects.hash(id);
+        }
+        return Objects.hash(phoneNumber, email);
     }
 
     @Override
