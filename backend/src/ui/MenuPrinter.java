@@ -16,7 +16,8 @@ public class MenuPrinter {
         System.out.println("4. Show event results");
         System.out.println("5. Edit current event");
         System.out.println("6. Delete current event");
-        System.out.println("7. Exit");
+        System.out.println("7. Export excel file of current event");
+        System.out.println("8. Exit");
     }
 
     public static void displayManageParticipantMenu() {

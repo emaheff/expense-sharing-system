@@ -53,12 +53,22 @@ public class UserInterface {
                 deleteEvent();
                 break;
             case 7:
+                exportExcel();
+                break;
+            case 8:
                 System.out.println("Exiting. Goodbye!");
                 isRunning = false;
                 break;
             default:
                 System.out.println("Invalid option. Please try again.");
         }
+    }
+    private void exportExcel() {
+        if (eventManager.getCurrentEvent() == null) {
+            System.out.println("You need first to create or load an event");
+            return;
+        }
+        ExcelExporter.exportToFile(eventManager.getCurrentEvent());
     }
 
     public void handleEditEvent() {
