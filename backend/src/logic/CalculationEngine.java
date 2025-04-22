@@ -46,6 +46,8 @@ public class CalculationEngine {
 
         Map<Category, Double> adjustedCategoryExpense =
                 calculateAdjustedCategoryExpenses(totalExpensePerCategory, totalParticipationFee, totalExpenses);
+        event.setAdjustedTotalExpensePerCategory(adjustedCategoryExpense);
+
 
         return calculateParticipantConsumption(adjustedCategoryExpense, event.getConsumedPerCategory());
     }
@@ -99,7 +101,10 @@ public class CalculationEngine {
                         totalConsumed.getOrDefault(participant, 0.0) + sharePerParticipant
                 );
             }
+        }
 
+        for (Participant participant: totalConsumed.keySet()) {
+            participant.setTotalConsumed(totalConsumed.getOrDefault(participant, 0.0));
         }
 
         return totalConsumed;

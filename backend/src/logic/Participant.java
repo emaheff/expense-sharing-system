@@ -4,7 +4,9 @@ import java.util.*;
 public class Participant implements Comparable<Participant> {
     private String name;
     private Map<Category, Double> expenses;
+    private double totalExpenses;
     private List<Category> consumedCategories;
+    private double totalConsumed;
     private double balance;
     private String email;
     private String phoneNumber;
@@ -17,6 +19,7 @@ public class Participant implements Comparable<Participant> {
         this.balance = 0.0;
         email = "";
         this.phoneNumber = phoneNumber;
+        totalConsumed = 0.0;
     }
 
     public Participant(String name) {
@@ -93,6 +96,15 @@ public class Participant implements Comparable<Participant> {
     public void setConsumedCategories(List<Category> consumedCategories) {
         this.consumedCategories = consumedCategories;
     }
+
+    public void setTotalConsumed(double totalConsumed) {
+        this.totalConsumed = totalConsumed;
+    }
+
+    public double getTotalConsumed() {
+        return totalConsumed;
+    }
+
 
     @Override
     public boolean equals(Object o) {

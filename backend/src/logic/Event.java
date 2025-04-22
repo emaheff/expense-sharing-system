@@ -9,6 +9,7 @@ public class Event {
     private List<Participant> participants;
     private List<Debt> debts;
     private Map<Category, Double> totalExpensePerCategory;
+    private Map<Category, Double> adjustedTotalExpensePerCategory;
     private Map<Category, List<Participant>> consumedPerCategory;
     private Map<Category, Map<Participant, Double>> expensePerCategory;
     private int id;
@@ -23,6 +24,7 @@ public class Event {
         this.totalExpensePerCategory = new HashMap<>();
         this.consumedPerCategory = new HashMap<>();
         this.expensePerCategory = new HashMap<>();
+        this.adjustedTotalExpensePerCategory = new HashMap<>();
         this.date = date;
     }
 
@@ -102,6 +104,14 @@ public class Event {
 
     public LocalDate getDate() {
         return date;
+    }
+
+    public void setAdjustedTotalExpensePerCategory(Map<Category, Double> adjustedTotalExpensePerCategory) {
+        this.adjustedTotalExpensePerCategory = adjustedTotalExpensePerCategory;
+    }
+
+    public Map<Category, Double> getAdjustedTotalExpensePerCategory() {
+        return adjustedTotalExpensePerCategory;
     }
 
 

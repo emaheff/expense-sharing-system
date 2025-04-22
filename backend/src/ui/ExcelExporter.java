@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class ExcelExporter {
 
@@ -89,6 +90,88 @@ public class ExcelExporter {
         }
     }
 
+    private static void createDebtsSheet(Event event, Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Debts");
+
+        Row header = sheet.createRow(0);
+        header.createCell(0).setCellValue("Debtor");
+        header.createCell(1).setCellValue("Creditor");
+        header.createCell(2).setCellValue("Amount");
+
+        for (int row = 0; row < event.getDebts().size(); row++) {
+            Row debtRow = sheet.createRow(row + 1);
+            debtRow.createCell(0).setCellValue(event.getDebts().get(row).getDebtor().getName());
+            debtRow.createCell(1).setCellValue(event.getDebts().get(row).getCreditor().getName());
+            debtRow.createCell(2).setCellValue(event.getDebts().get(row).getAmount());
+        }
+
+        for (int col = 0; col < 3; col++) {
+            sheet.autoSizeColumn(col);
+        }
+    }
+
+    private static void creteParticipantBalanceSheet(Event event, Workbook workbook) {
+        Sheet sheet = workbook.createSheet("Participants Balance");
+
+        Row header = sheet.createRow(0);
+        header.createCell(1).setCellValue("Total Consumed");
+        header.createCell(2).setCellValue("Total Expense");
+        header.createCell(3).setCellValue("Balance");
+
+        List<Participant> participants = event.getParticipants();
+        for (int row = 0; row < participants.size(); row++) {
+            Row participantRow = sheet.createRow(row + 1);
+            participantRow.createCell(0).setCellValue(participants.get(row).getName());
+            double totalConsumed = participants.get(row).getTotalConsumed();
+            participantRow.createCell(1).setCellValue(totalConsumed + event.getParticipationFee());
+            participantRow.createCell(2).setCellValue(participants.get(row).getTotalExpense());
+            participantRow.createCell(3).setCellValue(participants.get(row).getBalance());
+        }
+
+        for (int col = 0; col <= 3; col++) {
+            sheet.autoSizeColumn(col);
+        }
+    }
+
+    private static void createCategorySummarySheet(Event event, Workbook workbook) {
+        List<Category> eventCategory = event.getCategories();
+        double totalParticipationFee = event.getParticipationFee() * event.getParticipants().size();
+        Map<Category, Double> expensePerCategory = event.getTotalExpensePerCategory();
+
+        Sheet sheet = workbook.createSheet("Category Summary");
+
+        Row header = sheet.createRow(0);
+        Row rawCostRow = sheet.createRow(1);
+        Row adjustedCostRow = sheet.createRow(2);
+        Row perCnsumerRow = sheet.createRow(3);
+
+        rawCostRow.createCell(0).setCellValue("Raw cost");
+        adjustedCostRow.createCell(0).setCellValue("Adjust Cost");
+        perCnsumerRow.createCell(0).setCellValue("Per Consumer");
+
+        for (int col = 0; col <eventCategory.size(); col++) {
+            Category category = eventCategory.get(col);
+            String categoryName = category.getName();
+
+            header.createCell(col + 1).setCellValue(categoryName);
+            rawCostRow.createCell(col + 1).setCellValue(expensePerCategory.get(category));
+            double adjustPrice = event.getAdjustedTotalExpensePerCategory().get(category);
+            adjustedCostRow.createCell(col + 1).setCellValue(adjustPrice);
+            double perConsumer = adjustPrice / event.getConsumedPerCategory().get(category).size();
+            perCnsumerRow.createCell(col + 1).setCellValue(perConsumer);
+        }
+
+        int feeCol = eventCategory.size() + 1;
+        header.createCell(feeCol).setCellValue("Total Participation Fee");
+        rawCostRow.createCell(feeCol).setCellValue(totalParticipationFee);
+        adjustedCostRow.createCell(feeCol).setCellValue(0);
+        perCnsumerRow.createCell(feeCol).setCellValue(event.getParticipationFee());
+
+        for (int col = 0; col <= feeCol; col++) {
+            sheet.autoSizeColumn(col);
+        }
+        }
+
 
     public static void exportToFile(Event event) {
 
@@ -96,6 +179,9 @@ public class ExcelExporter {
 
         createExpensesSheet(event, workbook);
         createConsumersSheet(event, workbook);
+        createCategorySummarySheet(event, workbook);
+        creteParticipantBalanceSheet(event, workbook);
+        createDebtsSheet(event, workbook);
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         String formattedDate = event.getDate().format(formatter);
