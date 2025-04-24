@@ -8,8 +8,19 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * ParticipantDao manages database operations related to participants,
+ * including retrieval, insertion, linking to events, and loading related expenses and consumptions.
+ */
 public class ParticipantDao {
 
+    /**
+     * Finds a participant in the database by phone number.
+     * If not found, inserts the participant and returns the new ID.
+     *
+     * @param participant the participant to find or insert
+     * @return the ID of the participant in the database
+     */
     private static int getOrCreateParticipant(Participant participant) {
 
         if (participant.getName() == null || participant.getName().isBlank()) {
@@ -57,6 +68,9 @@ public class ParticipantDao {
         }
     }
 
+    /**
+     * Links a participant to an event in the join table.
+     */
     private static void linkParticipantToEvent(int participantId, int eventId) {
         String sql = "INSERT INTO event_participants (event_id, participant_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
 
@@ -72,6 +86,11 @@ public class ParticipantDao {
         }
     }
 
+    /**
+     * Saves and links all participants in an event to the database.
+     *
+     * @param event the event containing participants to be saved
+     */
     public static void saveEventParticipants(Event event) {
         int eventId = event.getId();
 
@@ -89,7 +108,13 @@ public class ParticipantDao {
         }
     }
 
-    public static List<Participant> getParticipantsForEvent(int eventId) {
+    /**
+     * Retrieves all participants linked to a specific event and loads their consumptions and expenses.
+     *
+     * @param eventId the event ID
+     * @return a list of Participant objects
+     */
+    public static List<Participant> getParticipantsFromEvent(int eventId) {
         List<Participant> participants = new ArrayList<>();
         String sql = """
         SELECT p.id, p.name, p.phone, p.email
@@ -123,6 +148,9 @@ public class ParticipantDao {
         return participants;
     }
 
+    /**
+     * Loads consumption data for each participant and updates their consumed categories.
+     */
     private static void loadParticipantConsumptions(List<Participant> participants, int eventId, List<Category> categories) {
         String sql = """
         SELECT participant_id, category_id
@@ -153,7 +181,9 @@ public class ParticipantDao {
         }
     }
 
-
+    /**
+     * Loads expense data for each participant and updates their expense map.
+     */
     private static void loadParticipantExpenses(List<Participant> participants, int eventId, List<Category> categories) {
         String sql = """
         SELECT participant_id, category_id, amount
@@ -185,12 +215,18 @@ public class ParticipantDao {
         }
     }
 
+    /**
+     * Finds a participant in a list by their ID.
+     *
+     * @param participants the list of participants to search
+     * @param id the ID to match
+     * @return the matching Participant or null if not found
+     */
     public static Participant findParticipantById(List<Participant> participants, int id) {
         for (Participant participant : participants) {
             if (participant.getId() == id) return participant;
         }
         return null;
     }
-
 
 }

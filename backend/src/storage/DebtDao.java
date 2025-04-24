@@ -11,8 +11,18 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * DebtDao handles database operations related to debts in the system.
+ * It provides methods to persist and retrieve debts associated with an event.
+ */
 public class DebtDao {
 
+    /**
+     * Saves the list of debts associated with an event to the database.
+     * This method clears any existing debts for the event before inserting the updated list.
+     *
+     * @param event the event whose debts are to be saved
+     */
     public static void saveEventDebts(Event event) {
         int eventId = event.getId();
 
@@ -47,6 +57,14 @@ public class DebtDao {
         }
     }
 
+    /**
+     * Retrieves all debts associated with the specified event.
+     * It matches participant IDs with provided participant objects.
+     *
+     * @param eventId the ID of the event
+     * @param participants the list of participants in the event
+     * @return list of Debt objects associated with the event
+     */
     public static List<Debt> getDebtsForEvent(int eventId, List<Participant> participants) {
         List<Debt> debts = new ArrayList<>();
 

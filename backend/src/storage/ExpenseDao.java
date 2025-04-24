@@ -7,8 +7,19 @@ import logic.Participant;
 import java.sql.*;
 import java.util.Map;
 
+/**
+ * ExpenseDao handles database operations related to expenses and consumptions
+ * made by participants during an event.
+ */
 public class ExpenseDao {
 
+    /**
+     * Saves the expenses of all participants in a given event.
+     * This method deletes existing expenses for the event and replaces them
+     * with the current expense map from each participant.
+     *
+     * @param event the event whose expenses are to be saved
+     */
     public static void saveEventExpenses(Event event) {
         int eventId = event.getId();
         if (eventId == 0) {
@@ -16,14 +27,14 @@ public class ExpenseDao {
         }
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            // delete exist expenses
+            // Delete existing expenses for the event
             try (PreparedStatement deleteStmt = conn.prepareStatement(
                     "DELETE FROM expenses WHERE event_id = ?")) {
                 deleteStmt.setInt(1, eventId);
                 deleteStmt.executeUpdate();
             }
 
-            // enter new expenses
+            // Insert new expenses from participants
             String insertSql = "INSERT INTO expenses (event_id, participant_id, category_id, amount) VALUES (?, ?, ?, ?)";
             try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
                 for (Participant participant : event.getParticipants()) {
@@ -43,6 +54,13 @@ public class ExpenseDao {
         }
     }
 
+    /**
+     * Saves the consumptions of all participants in a given event.
+     * This method deletes existing consumption records and inserts current data
+     * based on each participant's consumed categories.
+     *
+     * @param event the event whose consumptions are to be saved
+     */
     public static void saveEventConsumptions(Event event) {
         int eventId = event.getId();
         if (eventId == 0) {
@@ -50,14 +68,14 @@ public class ExpenseDao {
         }
 
         try (Connection conn = DatabaseManager.getConnection()) {
-            // delete exist consumptions from this event if exist
+            // Delete existing consumption records for the event
             try (PreparedStatement deleteStmt = conn.prepareStatement(
                     "DELETE FROM consumptions WHERE event_id = ?")) {
                 deleteStmt.setInt(1, eventId);
                 deleteStmt.executeUpdate();
             }
 
-            // enter new consumptions
+            // Insert new consumption records
             String insertSql = "INSERT INTO consumptions (event_id, participant_id, category_id) VALUES (?, ?, ?)";
             try (PreparedStatement insertStmt = conn.prepareStatement(insertSql)) {
                 for (Participant participant : event.getParticipants()) {

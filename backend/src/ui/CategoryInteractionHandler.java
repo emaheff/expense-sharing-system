@@ -7,8 +7,19 @@ import logic.Participant;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles all user interactions related to category management,
+ * such as adding, renaming, removing categories and mapping them to participants.
+ */
 public class CategoryInteractionHandler {
 
+    /**
+     * Displays a list of categories and prompts the user to choose one.
+     *
+     * @param header the message displayed above the category list
+     * @param categories the list of categories to display
+     * @return the selected Category, or null if the user chose to skip
+     */
     public static Category getCategoryFromUser(String header, List<Category> categories) {
         List<Category> categoriesDisplay = new ArrayList<>(categories);
         MenuPrinter.displayNumberedCategories(categoriesDisplay);
@@ -31,18 +42,33 @@ public class CategoryInteractionHandler {
         return getCategoryFromNumber(choice, categoriesDisplay);
     }
 
+    /**
+     * Gets a category from a numbered list based on user input (1-based index).
+     *
+     * @param userNumber the number input from the user
+     * @param displayedCategories the list of displayed categories
+     * @return the selected Category
+     */
     public static Category getCategoryFromNumber(int userNumber, List<Category> displayedCategories) {
         Category result = displayedCategories.get(userNumber - 1);
         displayedCategories.remove(userNumber -1);
         return result;
     }
 
+    /**
+     * Entry point for category management actions, allows user to choose an action.
+     *
+     * @param event the event whose categories are being managed
+     */
     public static void handleManageCategories(Event event) {
         MenuPrinter.displayManageCategoryMenu();
         int choice = UserInputHandler.getIntInput("Your choice: ");
         handleManagerCategoryChoice(choice, event);
     }
 
+    /**
+     * Handles the specific action based on user choice in the category management menu.
+     */
     private static void handleManagerCategoryChoice(int choice, Event event) {
         switch (choice) {
             case 1:
@@ -61,6 +87,9 @@ public class CategoryInteractionHandler {
         }
     }
 
+    /**
+     * Removes a selected category from the event and updates all participants accordingly.
+     */
     private static void handleRemoveCategory(Event event) {
         Category categoryToRemove = getCategoryFromUser("Enter Category Number you wants to remove:" +
                 " if there are none enter 0", event.getCategories());
@@ -74,6 +103,9 @@ public class CategoryInteractionHandler {
         }
     }
 
+    /**
+     * Adds a new category to the event and asks user to map it to participant expenses and consumptions.
+     */
     private static void handleAddNewCategory(Event event) {
         if (event == null) {
             System.out.println("No event selected to edit.");
@@ -85,6 +117,9 @@ public class CategoryInteractionHandler {
         addNewCategoryToParticipants(newCategory, event);
     }
 
+    /**
+     * For each participant, asks whether they spent money or consumed from the newly added category.
+     */
     private static void addNewCategoryToParticipants(Category category, Event event) {
         for (Participant participant: event.getParticipants()) {
 
@@ -98,6 +133,9 @@ public class CategoryInteractionHandler {
         }
     }
 
+    /**
+     * Renames a category by asking the user for a new name.
+     */
     private static void handleRenameCategory(Event event) {
         Category categoryToRename = getCategoryFromUser("Enter Category Number you wants to rename:" +
                 " if there are none enter 0", event.getCategories());

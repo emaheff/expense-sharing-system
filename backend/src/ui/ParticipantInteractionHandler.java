@@ -5,8 +5,19 @@ import logic.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Handles user interactions related to participants including adding, editing,
+ * removing participants, and managing their expenses and consumption categories.
+ */
 public class ParticipantInteractionHandler {
 
+    /**
+     * Prompts the user to select a participant from a list.
+     *
+     * @param event the event containing the participants
+     * @param header the message to display before the list
+     * @return the selected participant or null if the user skips
+     */
     private static Participant getParticipantFromUser(Event event, String header) {
         List<Participant> participants = new ArrayList<>(event.getParticipants());
         System.out.println(header);
@@ -29,10 +40,16 @@ public class ParticipantInteractionHandler {
         return getParticipantFromNumber(choice, participants);
     }
 
+    /**
+     * Returns a participant by 1-based index from the given list.
+     */
     public static Participant getParticipantFromNumber(int userNumber, List<Participant> displayedParticipants) {
         return displayedParticipants.get(userNumber - 1);
     }
 
+    /**
+     * Displays and handles the main participant management menu.
+     */
     public static void handleManageParticipants(Event event) {
         MenuPrinter.displayManageParticipantMenu();
         int choice = UserInputHandler.getIntInput("Your choice: ");
@@ -41,19 +58,11 @@ public class ParticipantInteractionHandler {
 
     private static void handleManagerParticipantChoice(int choice, Event event) {
         switch (choice) {
-            case 1:
-                addParticipant(event);
-                break;
-            case 2:
-                handleRemoveParticipant(event);
-                break;
-            case 3:
-                handleEditParticipant(event);
-                break;
-            case 4:
-                break;
-            default:
-                System.out.println("Invalid option. Please try again.");
+            case 1 -> addParticipant(event);
+            case 2 -> handleRemoveParticipant(event);
+            case 3 -> handleEditParticipant(event);
+            case 4 -> {}
+            default -> System.out.println("Invalid option. Please try again.");
         }
     }
 
@@ -81,26 +90,13 @@ public class ParticipantInteractionHandler {
 
     private static void handleEditParticipantChoice(int choice, Participant participant, Event event) {
         switch (choice) {
-            case 1:
-                handleRenameParticipant(event);
-                break;
-            case 2:
-                handlePhoneNumberEdit(event);
-                break;
-            case 3:
-                handleEmailAddressEdit(event);
-                break;
-            case 4:
-                handleEditExpensesPerCategory(participant, event);
-                break;
-            case 5:
-                handleEditConsumedCategories(participant, event);
-                break;
-            case 6:
-                handleManageParticipants(event);
-                break;
-            default:
-                System.out.println("Invalid option. Please try again.");
+            case 1 -> handleRenameParticipant(event);
+            case 2 -> handlePhoneNumberEdit(event);
+            case 3 -> handleEmailAddressEdit(event);
+            case 4 -> handleEditExpensesPerCategory(participant, event);
+            case 5 -> handleEditConsumedCategories(participant, event);
+            case 6 -> handleManageParticipants(event);
+            default -> System.out.println("Invalid option. Please try again.");
         }
     }
 

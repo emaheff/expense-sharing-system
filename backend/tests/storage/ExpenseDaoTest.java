@@ -6,7 +6,6 @@ import logic.Participant;
 import org.junit.jupiter.api.*;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -64,7 +63,7 @@ public class ExpenseDaoTest {
         ExpenseDao.saveEventExpenses(event);
 
         // Load participants again to verify expenses were saved and loaded correctly
-        List<Participant> loaded = ParticipantDao.getParticipantsForEvent(event.getId());
+        List<Participant> loaded = ParticipantDao.getParticipantsFromEvent(event.getId());
         Participant loadedAlice = loaded.stream().filter(p -> p.getName().equals("Alice")).findFirst().orElse(null);
         Participant loadedBob = loaded.stream().filter(p -> p.getName().equals("Bob")).findFirst().orElse(null);
 
@@ -85,7 +84,7 @@ public class ExpenseDaoTest {
         ExpenseDao.saveEventConsumptions(event);
 
         // Load participants again to verify consumption data
-        List<Participant> loaded = ParticipantDao.getParticipantsForEvent(event.getId());
+        List<Participant> loaded = ParticipantDao.getParticipantsFromEvent(event.getId());
         Participant loadedAlice = loaded.stream().filter(p -> p.getName().equals("Alice")).findFirst().orElse(null);
         Participant loadedBob = loaded.stream().filter(p -> p.getName().equals("Bob")).findFirst().orElse(null);
 

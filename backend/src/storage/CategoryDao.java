@@ -2,14 +2,25 @@ package storage;
 
 import logic.Category;
 import logic.Event;
-import logic.Participant;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Data access object for handling categories in the database.
+ * This class provides methods for retrieving, inserting, updating,
+ * and linking categories to events.
+ */
 public class CategoryDao {
 
+    /**
+     * Retrieves the category ID from the database or inserts a new one if not found.
+     * If the category already has an ID, attempts to update its name.
+     *
+     * @param category the category to find or insert
+     * @return the category ID in the database, or -1 if an error occurred
+     */
     private static int getOrCreateCategory(Category category) {
         if (category.getName() == null || category.getName().isBlank()) {
             throw new IllegalArgumentException("Category name cannot be null or empty");
@@ -17,6 +28,7 @@ public class CategoryDao {
 
         try (Connection conn = DatabaseManager.getConnection()) {
 
+            // Attempt update if ID is known
             if (category.getId() != 0) {
                 String updateSql = "UPDATE categories SET name = ? WHERE id = ?";
                 try (PreparedStatement updateStmt = conn.prepareStatement(updateSql)) {
@@ -30,6 +42,7 @@ public class CategoryDao {
                 }
             }
 
+            // Check if category already exists by name
             String selectSql = "SELECT id FROM categories WHERE name = ?";
             try (PreparedStatement selectStmt = conn.prepareStatement(selectSql)) {
                 selectStmt.setString(1, category.getName());
@@ -42,6 +55,7 @@ public class CategoryDao {
                 }
             }
 
+            // Insert new category if not found
             String insertSql = "INSERT INTO categories (name) VALUES (?)";
             try (PreparedStatement insertStmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
                 insertStmt.setString(1, category.getName());
@@ -63,6 +77,12 @@ public class CategoryDao {
         }
     }
 
+    /**
+     * Links a category to an event in the join table.
+     *
+     * @param categoryId the ID of the category
+     * @param eventId the ID of the event
+     */
     private static void linkCategoryToEvent(int categoryId, int eventId) {
         String sql = "INSERT INTO event_categories (event_id, category_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
 
@@ -78,6 +98,12 @@ public class CategoryDao {
         }
     }
 
+    /**
+     * Saves all categories related to the event by inserting them (if needed)
+     * and linking them to the event in the join table.
+     *
+     * @param event the event whose categories should be saved
+     */
     public static void saveEventCategories(Event event) {
         int eventId = event.getId();
 
@@ -95,6 +121,12 @@ public class CategoryDao {
         }
     }
 
+    /**
+     * Retrieves the list of categories associated with the given event ID.
+     *
+     * @param eventId the ID of the event
+     * @return list of categories linked to the event
+     */
     public static List<Category> getCategoriesForEvent(int eventId) {
         List<Category> categories = new ArrayList<>();
         String sql = """
@@ -123,6 +155,13 @@ public class CategoryDao {
         return categories;
     }
 
+    /**
+     * Finds a category in the list by its ID.
+     *
+     * @param categories list of categories to search
+     * @param id the ID to find
+     * @return the category with the given ID, or null if not found
+     */
     public static Category findCategoryById(List<Category> categories, int id) {
         for (Category category : categories) {
             if (category.getId() == id) return category;

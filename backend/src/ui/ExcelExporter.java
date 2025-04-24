@@ -14,9 +14,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * ExcelExporter generates an Excel report for a given Event using Apache POI.
+ * It includes sheets for expenses, consumptions, participant balances, debts, and category summaries.
+ */
 public class ExcelExporter {
 
+    static final String PATH = "docs/excel-reports/";
 
+    /**
+     * Creates a sheet listing each expense with the amount, participant name, and category.
+     */
     private static void createExpensesSheet(Event event, Workbook workbook) {
         Sheet expensesSheet = workbook.createSheet("Expenses");
         Row header1 = expensesSheet.createRow(0);
@@ -43,6 +51,10 @@ public class ExcelExporter {
         }
     }
 
+    /**
+     * Creates a sheet showing which participants consumed each category.
+     * Each column represents a category, and rows represent consumers.
+     */
     private static void createConsumersSheet(Event event, Workbook workbook) {
         Sheet sheet = workbook.createSheet("Consumers");
 
@@ -90,6 +102,9 @@ public class ExcelExporter {
         }
     }
 
+    /**
+     * Creates a sheet summarizing debts between participants.
+     */
     private static void createDebtsSheet(Event event, Workbook workbook) {
         Sheet sheet = workbook.createSheet("Debts");
 
@@ -110,6 +125,10 @@ public class ExcelExporter {
         }
     }
 
+    /**
+     * Creates a sheet with participants' financial summary including
+     * total consumed (including participation fee), total expense, and net balance.
+     */
     private static void creteParticipantBalanceSheet(Event event, Workbook workbook) {
         Sheet sheet = workbook.createSheet("Participants Balance");
 
@@ -133,6 +152,10 @@ public class ExcelExporter {
         }
     }
 
+    /**
+     * Creates a sheet summarizing raw and adjusted costs per category,
+     * including per-consumer cost and total participation fee.
+     */
     private static void createCategorySummarySheet(Event event, Workbook workbook) {
         List<Category> eventCategory = event.getCategories();
         double totalParticipationFee = event.getParticipationFee() * event.getParticipants().size();
@@ -170,9 +193,13 @@ public class ExcelExporter {
         for (int col = 0; col <= feeCol; col++) {
             sheet.autoSizeColumn(col);
         }
-        }
+    }
 
-
+    /**
+     * Exports the entire event data to a single Excel file containing multiple sheets.
+     *
+     * @param event the event to export
+     */
     public static void exportToFile(Event event) {
 
         Workbook workbook = new XSSFWorkbook();
@@ -190,10 +217,10 @@ public class ExcelExporter {
         String fileName = event.getEventName().replaceAll("\\s+", "_") + "_" + formattedDate + ".xlsx";
 
 
-        String outputPath = "docs/excel-reports/" + fileName;
+        String outputPath = PATH + fileName;
 
 
-        new File("docs/excel-reports").mkdirs();
+        new File(PATH).mkdirs();
 
 
         try (FileOutputStream fileOut = new FileOutputStream(outputPath)) {

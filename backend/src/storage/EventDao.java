@@ -9,8 +9,18 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * EventDao handles database interactions related to Event objects,
+ * including creation, update, deletion, and full reconstruction from the database.
+ */
 public class EventDao {
 
+    /**
+     * Inserts a new event or updates an existing one based on the presence of an ID.
+     *
+     * @param event the event to insert or update
+     * @return true if the operation was successful, false otherwise
+     */
     public static boolean insertOrUpdateEvent(Event event) {
         String insertSql = "INSERT INTO events (name, date, participation_fee) VALUES (?, ?, ?)";
         String updateSql = "UPDATE events SET name = ?, date = ?, participation_fee = ? WHERE id = ?";
@@ -49,6 +59,11 @@ public class EventDao {
         }
     }
 
+    /**
+     * Retrieves a summary list of all events from the database.
+     *
+     * @return a list of EventSummary objects (ID and name only)
+     */
     public static List<EventSummary> getAllEvents() {
         List<EventSummary> events = new ArrayList<>();
         String sql = "SELECT id, name FROM events ORDER BY date DESC";
@@ -70,6 +85,12 @@ public class EventDao {
         return events;
     }
 
+    /**
+     * Loads a full Event object by its ID, including its participants, categories, and debts.
+     *
+     * @param eventId the ID of the event to load
+     * @return the fully constructed Event, or null if not found or on error
+     */
     public static Event loadEventById(int eventId) {
         String sql = "SELECT name, date, participation_fee FROM events WHERE id = ?";
 
@@ -86,7 +107,7 @@ public class EventDao {
 
                 Event event = new Event(name, fee, date);
                 event.setId(eventId);
-                List<Participant> eventParticipants = ParticipantDao.getParticipantsForEvent(eventId);
+                List<Participant> eventParticipants = ParticipantDao.getParticipantsFromEvent(eventId);
                 event.setParticipants(eventParticipants);
                 event.setCategories(CategoryDao.getCategoriesForEvent(eventId));
                 event.setDebts(DebtDao.getDebtsForEvent(eventId, eventParticipants));
@@ -100,6 +121,12 @@ public class EventDao {
         return null;
     }
 
+    /**
+     * Deletes an event from the database based on its ID.
+     *
+     * @param eventId the ID of the event to delete
+     * @return true if the deletion was successful, false otherwise
+     */
     public static boolean deleteEventById(int eventId) {
         String sql = "DELETE FROM events WHERE id = ?";
 
@@ -116,6 +143,9 @@ public class EventDao {
         }
     }
 
+    /**
+     * Simple projection class representing a minimal summary of an event.
+     */
     public static class EventSummary {
         private final int id;
         private final String name;

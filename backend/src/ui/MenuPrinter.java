@@ -5,8 +5,15 @@ import logic.Participant;
 
 import java.util.List;
 
+/**
+ * MenuPrinter handles all console-based UI printing related to menus and selection lists.
+ * This class is focused on static display methods for user navigation and item selection.
+ */
 public class MenuPrinter {
 
+    /**
+     * Displays the main menu options for the user.
+     */
     public static void displayMainMenu() {
         System.out.println("\n=== Expense Sharing System ===");
         System.out.println("Please choose an option:");
@@ -20,6 +27,9 @@ public class MenuPrinter {
         System.out.println("8. Exit");
     }
 
+    /**
+     * Displays the participant management menu.
+     */
     public static void displayManageParticipantMenu() {
         System.out.println("""
                 === Manage Participants ===
@@ -30,6 +40,11 @@ public class MenuPrinter {
                 """);
     }
 
+    /**
+     * Displays the menu for editing a specific participant.
+     *
+     * @param participant the participant to edit
+     */
     public static void displayParticipantEditMenu(Participant participant) {
         System.out.println("=== Edit Participant: " + participant.getName() + " ===");
         System.out.println("""
@@ -42,6 +57,9 @@ public class MenuPrinter {
                 """);
     }
 
+    /**
+     * Displays the menu for managing categories in an event.
+     */
     public static void displayManageCategoryMenu() {
         System.out.println("""
                 === Manage Categories ===
@@ -52,6 +70,12 @@ public class MenuPrinter {
                 """);
     }
 
+    /**
+     * Returns a string listing participants with numbered entries.
+     *
+     * @param participants the list of participants
+     * @return formatted string of numbered participant names
+     */
     public static String displayNumberedParticipants(List<Participant> participants) {
         StringBuilder result = new StringBuilder();
 
@@ -61,6 +85,12 @@ public class MenuPrinter {
         return result.toString();
     }
 
+    /**
+     * Returns a string listing categories with numbered entries.
+     *
+     * @param categories the list of categories
+     * @return formatted string of numbered category names
+     */
     public static String displayNumberedCategories(List<Category> categories) {
         StringBuilder result = new StringBuilder();
 
@@ -70,6 +100,9 @@ public class MenuPrinter {
         return result.toString();
     }
 
+    /**
+     * Displays the event editing menu options.
+     */
     public static void displayEditMenu() {
         System.out.println("""
                 === Edit Event ===
@@ -81,4 +114,5 @@ public class MenuPrinter {
                 6. Back to main menu
                 """);
     }
+
 }

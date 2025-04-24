@@ -2,32 +2,62 @@ package logic;
 
 import java.util.*;
 
+/**
+ * CalculationEngine handles the logic for computing the financial balances
+ * of participants in an event, including expenses, consumption, and resulting debts.
+ */
 public class CalculationEngine {
-    private Map<Participant, Double> latestTotalConsumed = new HashMap<>();
 
-
+    /**
+     * Main entry point to compute all balances and debts for the given event.
+     * It calculates expenses, adjusts for participation fees, determines balances,
+     * and sets the resulting list of debts in the event.
+     *
+     * @param event the event for which to perform the calculations
+     */
     public void calculateBalances(Event event) {
+        Map<Participant, Double> totalExpensesByParticipant = calculateTotalExpensesByParticipant(event);
 
-        // Step 1: Calculate total expenses and total consumption per participant
-        Map<Participant, Double> totalExpenseByParticipant = calculateTotalExpensesByParticipant(event);
-        Map<Participant, Double> totalConsumedByParticipant =
-                calculateTotalConsumedByParticipant(event);
-        this.latestTotalConsumed = totalConsumedByParticipant;
 
-        // Step 2: Determine creditors and debtors based on net balances
+        calculateTotalConsumedByParticipant(event);
+
+        Map<Participant, Double> totalConsumedByParticipant = new HashMap<>();
+        for (Participant p : event.getParticipants()) {
+            totalConsumedByParticipant.put(p, p.getTotalConsumed());
+        }
+
+        updateEventDebts(event, totalExpensesByParticipant, totalConsumedByParticipant);
+    }
+
+
+    /**
+     * Updates the list of debts in the event based on net balances between participants.
+     */
+    private void updateEventDebts(Event event,
+                                  Map<Participant, Double> totalExpensesByParticipant,
+                                  Map<Participant, Double> totalConsumedByParticipant) {
+
         List<Participant> creditors = new ArrayList<>();
         List<Participant> debtors = new ArrayList<>();
-        calculateNetBalances(totalExpenseByParticipant, totalConsumedByParticipant, creditors, debtors, event.getParticipationFee(), event);
 
-        // Step 3: Generate final list of debts
+        calculateNetBalances(
+                totalExpensesByParticipant,
+                totalConsumedByParticipant,
+                creditors,
+                debtors,
+                event.getParticipationFee(),
+                event
+        );
+
         event.setDebts(generateDebts(creditors, debtors));
     }
 
-    public Map<Participant, Double> getLatestConsumptionMap() {
-        return latestTotalConsumed;
-    }
-
-
+    /**
+     * Calculates the total amount paid by each participant.
+     *
+     * @param event the event to analyze
+     * @return a map of participants to their total expenses
+     */
     private Map<Participant, Double> calculateTotalExpensesByParticipant(Event event) {
         Map<Participant, Double> totalExpenseByParticipant = new HashMap<>();
         for (Participant participant : event.getParticipants()) {
@@ -36,7 +66,13 @@ public class CalculationEngine {
         return totalExpenseByParticipant;
     }
 
-    private Map<Participant, Double> calculateTotalConsumedByParticipant(Event event) {
+    /**
+     * Calculates and sets the total amount consumed by each participant,
+     * based on category-level adjusted expenses.
+     *
+     * @param event the event to analyze
+     */
+    private void calculateTotalConsumedByParticipant(Event event) {
         Map<Category, Double> totalExpensePerCategory = event.getTotalExpensePerCategory();
         List<Participant> participants = event.getParticipants();
         double participationFee = event.getParticipationFee();
@@ -48,17 +84,31 @@ public class CalculationEngine {
                 calculateAdjustedCategoryExpenses(totalExpensePerCategory, totalParticipationFee, totalExpenses);
         event.setAdjustedTotalExpensePerCategory(adjustedCategoryExpense);
 
+        Map<Participant, Double> totalConsumedMap = calculateParticipantConsumption(adjustedCategoryExpense, event.getConsumedPerCategory());
 
-        return calculateParticipantConsumption(adjustedCategoryExpense, event.getConsumedPerCategory());
+        // update each participant's field directly
+        for (Map.Entry<Participant, Double> entry : totalConsumedMap.entrySet()) {
+            entry.getKey().setTotalConsumed(entry.getValue());
+        }
     }
 
-
+    /**
+     * Computes the total expenses across all categories.
+     */
     private double calculateTotalExpenses(Map<Category, Double> totalExpensePerCategory) {
         return totalExpensePerCategory.values().stream()
                 .mapToDouble(Double::doubleValue)
                 .sum();
     }
 
+    /**
+     * Adjusts category expenses by subtracting proportional participation fee.
+     *
+     * @param totalExpensePerCategory raw expenses per category
+     * @param totalParticipationFee total participation fee for all participants
+     * @param totalExpenses sum of all raw expenses
+     * @return map of categories to adjusted expenses
+     */
     private Map<Category, Double> calculateAdjustedCategoryExpenses(
             Map<Category, Double> totalExpensePerCategory,
             double totalParticipationFee,
@@ -68,18 +118,19 @@ public class CalculationEngine {
 
         for (Map.Entry<Category, Double> entry : totalExpensePerCategory.entrySet()) {
             Category category = entry.getKey();
-            double expense = entry.getValue();
-            double proportion = expense / totalExpenses;
+            double categoryExpense = entry.getValue();
+            double proportion = categoryExpense / totalExpenses;
             double subsidy = totalParticipationFee * proportion;
-            double adjustedExpense = expense - subsidy;
+            double adjustedExpense = categoryExpense - subsidy;
             adjusted.put(category, adjustedExpense);
         }
-
-
-
         return adjusted;
     }
 
+    /**
+     * Distributes adjusted expenses across participants who consumed each category.
+     * Each consumer pays an equal share of the category's adjusted cost.
+     */
     private Map<Participant, Double> calculateParticipantConsumption(
             Map<Category, Double> adjustedCategoryExpense,
             Map<Category, List<Participant>> consumedPerCategory) {
@@ -102,17 +153,13 @@ public class CalculationEngine {
                 );
             }
         }
-
-        for (Participant participant: totalConsumed.keySet()) {
-            participant.setTotalConsumed(totalConsumed.getOrDefault(participant, 0.0));
-        }
-
         return totalConsumed;
     }
 
-
-
-
+    /**
+     * Calculates net balances for each participant and classifies them as creditors or debtors.
+     * A positive balance indicates a creditor, negative indicates a debtor.
+     */
     private void calculateNetBalances(
             Map<Participant, Double> totalExpensesByParticipant,
             Map<Participant, Double> totalConsumedByParticipant,
@@ -121,9 +168,9 @@ public class CalculationEngine {
             Event event
     ) {
         for (Participant participant : event.getParticipants()) {
-            double paid = totalExpensesByParticipant.getOrDefault(participant, 0.0);
-            double consumed = totalConsumedByParticipant.getOrDefault(participant, 0.0);
-            double netBalance = paid - (consumed + participationFee);
+            double totalPaid = totalExpensesByParticipant.getOrDefault(participant, 0.0);
+            double totalConsumed = totalConsumedByParticipant.getOrDefault(participant, 0.0);
+            double netBalance = totalPaid - (totalConsumed + participationFee);
 
             participant.setBalance(netBalance);
 
@@ -134,10 +181,15 @@ public class CalculationEngine {
             }
         }
 
+        // Sort to ensure deterministic order for debt generation
         Collections.sort(creditors);
         Collections.sort(debtors);
     }
 
+    /**
+     * Creates a list of debts between debtors and creditors based on their net balances.
+     * Transfers minimal amounts until all balances are close to zero.
+     */
     private List<Debt> generateDebts(List<Participant> creditors, List<Participant> debtors) {
         List<Debt> debts = new ArrayList<>();
 
@@ -172,5 +224,4 @@ public class CalculationEngine {
 
         return debts;
     }
-
 }

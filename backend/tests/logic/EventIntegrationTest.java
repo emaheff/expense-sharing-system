@@ -68,25 +68,21 @@ public class EventIntegrationTest {
         assertTrue(alice.getBalance() < 0);
     }
 
-
     @Test
-    @DisplayName("Check latestTotalConsumed from CalculationEngine")
-    void testLatestTotalConsumedMap() {
+    @DisplayName("Check totalConsumed field is correctly updated in Participant")
+    void testTotalConsumedFieldInParticipants() {
         event.finalizeCalculations();
 
-        CalculationEngine engine = new CalculationEngine();
-        engine.calculateBalances(event);
+        //
+        double davidConsumption = david.getTotalConsumed();
+        double aliceConsumption = alice.getTotalConsumed();
 
-        Map<Participant, Double> latestTotalConsumed = engine.getLatestConsumptionMap();
+        assertTrue(davidConsumption > 0, "David should have consumed a positive amount");
+        assertTrue(aliceConsumption > 0, "Alice should have consumed a positive amount");
 
-        assertEquals(2, latestTotalConsumed.size());
-        assertTrue(latestTotalConsumed.containsKey(david));
-        assertTrue(latestTotalConsumed.containsKey(alice));
-
-        double davidConsumption = latestTotalConsumed.get(david);
-        double aliceConsumption = latestTotalConsumed.get(alice);
-
-        assertTrue(davidConsumption > 0);
-        assertTrue(aliceConsumption > 0);
+        //
+        assertNotEquals(0.0, davidConsumption, 0.01);
+        assertNotEquals(0.0, aliceConsumption, 0.01);
     }
+
 }

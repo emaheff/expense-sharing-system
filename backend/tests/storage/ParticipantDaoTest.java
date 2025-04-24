@@ -46,7 +46,7 @@ public class ParticipantDaoTest {
     @Test
     @DisplayName("Participants are correctly saved and linked to event")
     void testSaveAndLoadParticipants() {
-        List<Participant> loadedParticipants = ParticipantDao.getParticipantsForEvent(event.getId());
+        List<Participant> loadedParticipants = ParticipantDao.getParticipantsFromEvent(event.getId());
         assertEquals(2, loadedParticipants.size(), "Should load 2 participants");
 
         boolean hasAlice = loadedParticipants.stream().anyMatch(p -> p.getName().equals("Alice"));
@@ -77,7 +77,7 @@ public class ParticipantDaoTest {
         ExpenseDao.saveEventConsumptions(event);
 
         // Act
-        List<Participant> loaded = ParticipantDao.getParticipantsForEvent(event.getId());
+        List<Participant> loaded = ParticipantDao.getParticipantsFromEvent(event.getId());
 
         // Assert
         assertEquals(2, loaded.size(), "Should load 2 participant");
@@ -95,7 +95,7 @@ public class ParticipantDaoTest {
     @DisplayName("findParticipantById returns the correct participant by ID")
     void testFindParticipantById() {
         // Arrange
-        List<Participant> participants = ParticipantDao.getParticipantsForEvent(event.getId());
+        List<Participant> participants = ParticipantDao.getParticipantsFromEvent(event.getId());
         assertFalse(participants.isEmpty(), "Participants list should not be empty");
 
         Participant expected = participants.get(0);

@@ -9,6 +9,11 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * UserInterface is the main UI handler for the expense sharing system.
+ * It interacts with the user via console, manages navigation between menus,
+ * and invokes the logic and persistence layers.
+ */
 public class UserInterface {
 
     private EventManager eventManager;
@@ -21,7 +26,9 @@ public class UserInterface {
         this.calculationEngine = new CalculationEngine();
     }
 
-    // Entry point of the program's UI
+    /**
+     * Entry point for running the UI loop.
+     */
     public void start() {
         while (isRunning) {
             MenuPrinter.displayMainMenu();
@@ -32,37 +39,21 @@ public class UserInterface {
 
     private void handleMainMenuChoice(int choice) {
         switch (choice) {
-            case 1:
-                System.out.println("Creating new event...");
-                createEvent();
-                break;
-            case 2:
-                System.out.println("Loading existing event...");
-                loadEventFlow();
-                break;
-            case 3:
-                saveCurrentEvent();
-                break;
-            case 4:
-                showResultsForCurrentEvent();
-                break;
-            case 5:
-                handleEditEvent();
-                break;
-            case 6:
-                deleteEvent();
-                break;
-            case 7:
-                exportExcel();
-                break;
-            case 8:
+            case 1 -> createEvent();
+            case 2 -> loadEventFlow();
+            case 3 -> saveCurrentEvent();
+            case 4 -> showResultsForCurrentEvent();
+            case 5 -> handleEditEvent();
+            case 6 -> deleteEvent();
+            case 7 -> exportExcel();
+            case 8 -> {
                 System.out.println("Exiting. Goodbye!");
                 isRunning = false;
-                break;
-            default:
-                System.out.println("Invalid option. Please try again.");
+            }
+            default -> System.out.println("Invalid option. Please try again.");
         }
     }
+
     private void exportExcel() {
         if (eventManager.getCurrentEvent() == null) {
             System.out.println("You need first to create or load an event");
@@ -71,7 +62,7 @@ public class UserInterface {
         ExcelExporter.exportToFile(eventManager.getCurrentEvent());
     }
 
-    public void handleEditEvent() {
+    private void handleEditEvent() {
         MenuPrinter.displayEditMenu();
         int choice = UserInputHandler.getIntInput("Your choice: ");
         handleEditEventChoice(choice);
@@ -79,28 +70,19 @@ public class UserInterface {
 
     private void handleEditEventChoice(int choice) {
         switch (choice) {
-            case 1:
-                renameEvent();
-                break;
-            case 2:
-                editEventDate();
-                break;
-            case 3:
-                editParticipationFee();
-                break;
-            case 4:
+            case 1 -> renameEvent();
+            case 2 -> editEventDate();
+            case 3 -> editParticipationFee();
+            case 4 -> {
                 CategoryInteractionHandler.handleManageCategories(eventManager.getCurrentEvent());
                 handleEditEvent();
-                break;
-            case 5:
+            }
+            case 5 -> {
                 ParticipantInteractionHandler.handleManageParticipants(eventManager.getCurrentEvent());
                 handleEditEvent();
-                break;
-            case 6:
-                start();
-                break;
-            default:
-                System.out.println("Invalid option. Please try again.");
+            }
+            case 6 -> start();
+            default -> System.out.println("Invalid option. Please try again.");
         }
     }
 
@@ -232,9 +214,7 @@ public class UserInterface {
 
         calculationEngine.calculateBalances(currentEvent);
 
-        Map<Participant, Double> totalConsumedMap = calculationEngine.getLatestConsumptionMap();
-
-        System.out.print(EventPresenter.formatParticipants(currentEvent, totalConsumedMap));
+        System.out.print(EventPresenter.formatParticipants(currentEvent));
         System.out.println(EventPresenter.formatDebts(currentEvent.getDebts()));
         System.out.println("=============================");
 
