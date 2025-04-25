@@ -1,72 +1,9 @@
 plugins {
     id 'java'
-    id 'jacoco'
 }
 
-group 'org.example'
-version '1.0-SNAPSHOT'
-
-repositories {
-    mavenCentral()
-    maven { url 'https://repo1.maven.org/maven2/' }
-}
-
-dependencies {
-    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
-    implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'org.postgresql:postgresql:42.7.3'
-    implementation 'org.apache.poi:poi-ooxml:5.2.3'
-
-}
-
-test {
-    useJUnitPlatform()
-    finalizedBy jacocoTestReport
-}
-
-jacoco {
-    toolVersion = "0.8.10"
-}
-
-jacocoTestReport {
-    executionData fileTree(dir: '.', include: 'build/jacoco/test.exec')
-
-    reports {
-        html.required = true
-        html.destination file("docs/test-coverage-report")
-    }
-}
-
-task usageCoverageReport(type: JacocoReport) {
-    executionData fileTree(dir: '.', include: 'usage.exec')
-
-    sourceDirectories.setFrom files(sourceSets.main.allSource.srcDirs)
-    classDirectories.setFrom files(sourceSets.main.output)
-
-    reports {
-        html.required = true
-        html.destination file("docs/usage-coverage-report")
-    }
-}
-
-sourceSets {
-    main {
-        java.srcDirs = ['backend/src']
-    }
-    test {
-        java.srcDirs = ['backend/tests']
-    }
-}
-
-jar {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    manifest {
-        attributes(
-                'Main-Class': 'Main'
-        )
-    }
-
-    from {
-        configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) }
+allprojects {
+    repositories {
+        mavenCentral()
     }
 }

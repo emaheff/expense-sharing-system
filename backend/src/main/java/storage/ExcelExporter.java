@@ -1,4 +1,4 @@
-package ui;
+package storage;
 
 import logic.Category;
 import logic.Event;

@@ -1,0 +1,42 @@
+plugins {
+    id 'java'
+    id 'jacoco'
+}
+
+dependencies {
+    implementation project(':shared')
+    implementation 'com.google.code.gson:gson:2.10.1'
+    implementation 'org.postgresql:postgresql:42.7.3'
+    implementation 'org.apache.poi:poi-ooxml:5.2.3'
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.9.3'
+}
+
+test {
+    useJUnitPlatform()
+    finalizedBy jacocoTestReport
+}
+
+jacoco {
+    toolVersion = "0.8.10"
+}
+
+jacocoTestReport {
+    executionData fileTree(dir: '.', include: 'build/jacoco/test.exec')
+
+    reports {
+        html.required = true
+        html.destination file("docs/test-coverage-report")
+    }
+}
+
+task usageCoverageReport(type: JacocoReport) {
+    executionData fileTree(dir: '.', include: 'usage.exec')
+
+    sourceDirectories.setFrom files(sourceSets.main.allSource.srcDirs)
+    classDirectories.setFrom files(sourceSets.main.output)
+
+    reports {
+        html.required = true
+        html.destination file("docs/usage-coverage-report")
+    }
+}
