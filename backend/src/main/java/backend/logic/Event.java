@@ -1,4 +1,4 @@
-package logic;
+package backend.logic;
 import java.time.LocalDate;
 import java.util.*;
 

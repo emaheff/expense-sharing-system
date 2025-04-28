@@ -1,8 +1,8 @@
-package storage;
+package backend.storage;
 
-import logic.Debt;
-import logic.Event;
-import logic.Participant;
+import backend.logic.Debt;
+import backend.logic.Event;
+import backend.logic.Participant;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

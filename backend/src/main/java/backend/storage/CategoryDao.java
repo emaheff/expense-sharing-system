@@ -1,7 +1,7 @@
-package storage;
+package backend.storage;
 
-import logic.Category;
-import logic.Event;
+import backend.logic.Category;
+import backend.logic.Event;
 
 import java.sql.*;
 import java.util.ArrayList;

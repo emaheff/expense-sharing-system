@@ -1,8 +1,8 @@
-package storage;
+package backend.storage;
 
-import logic.Category;
-import logic.Event;
-import logic.Participant;
+import backend.logic.Category;
+import backend.logic.Event;
+import backend.logic.Participant;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 

@@ -1,4 +1,4 @@
-package logic;
+package backend.logic;
 
 /**
  * Represents a debt between two participants in an event.

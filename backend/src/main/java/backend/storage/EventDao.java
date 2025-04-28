@@ -1,7 +1,7 @@
-package storage;
+package backend.storage;
 
-import logic.Event;
-import logic.Participant;
+import backend.logic.Event;
+import backend.logic.Participant;
 
 import java.sql.*;
 import java.sql.Date;
