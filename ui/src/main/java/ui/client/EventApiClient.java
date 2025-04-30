@@ -1,49 +1,48 @@
 package ui.client;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import shared.EventDto;
 
-import java.io.IOException;
+import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.io.OutputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 import com.google.gson.Gson;
 
 public class EventApiClient {
     private static final String BASE_URL = "http://localhost:8080/api/events";
-    private static final Gson gson = new Gson();
 
-    public void createEvent(EventDto eventDto) {
+    public void sendEvent(EventDto event) {
         try {
-            // connection creation
             URL url = new URL(BASE_URL);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.setDoOutput(true);
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+            conn.connect();
 
-            // convert object to Json
-            String json = gson.toJson(eventDto);
+            Gson gson = new GsonBuilder()
+                    .registerTypeAdapter(LocalDate.class, (JsonSerializer<LocalDate>) (src, typeOfSrc, context) ->
+                            new JsonPrimitive(src.format(DateTimeFormatter.ISO_LOCAL_DATE))
+                    )
+                    .create();
+            String json = gson.toJson(event);
+            System.out.println(json);
 
-            // sands the body request
-            try (OutputStream os = connection.getOutputStream()) {
-                byte[] input = json.getBytes(StandardCharsets.UTF_8);
-                os.write(input, 0, input.length);
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(json.getBytes());
+                os.flush();
             }
 
-            // getting response
-            int responseCode = connection.getResponseCode();
-            if (responseCode == HttpURLConnection.HTTP_OK || responseCode == HttpURLConnection.HTTP_CREATED) {
-                System.out.println("Event created successfully.");
-            } else {
-                System.out.println("Failed to create event. Response code: " + responseCode);
-            }
+            int responseCode = conn.getResponseCode();
+            System.out.println("Server responded with code: " + responseCode);
 
-            connection.disconnect();
-
-        } catch (IOException e) {
-            System.out.println("Error while creating event: " + e.getMessage());
+        } catch (Exception e) {
+            System.err.println("Failed to send event: " + e.getMessage());
         }
     }
 }

@@ -1,23 +1,45 @@
 package shared;
 
+import java.time.LocalDate;
+import java.util.List;
+
 public class EventDto {
     private String name;
-    private String date; // ISO string format (e.g., "2025-06-01")
+    private LocalDate date;
     private double participationFee;
+    private List<ParticipantDto> participants;
+    private List<CategoryDto> categories;
 
     public EventDto() {}
 
-    public EventDto(String name, String date, double fee) {
+    public EventDto(String name, LocalDate date, double participationFee,
+                    List<ParticipantDto> participants, List<CategoryDto> categories) {
         this.name = name;
         this.date = date;
-        this.participationFee = fee;
+        this.participationFee = participationFee;
+        this.participants = participants;
+        this.categories = categories;
     }
 
-    public String getName() { return name; }
-    public String getDate() { return date; }
-    public double getParticipationFee() { return participationFee; }
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String name) { this.name = name; }
-    public void setDate(String date) { this.date = date; }
-    public void setParticipationFee(double fee) { this.participationFee = fee; }
+    public LocalDate getDate() {
+        return date;
+    }
+
+    public double getParticipationFee() {
+        return participationFee;
+    }
+
+    public List<ParticipantDto> getParticipants() {
+        return participants;
+    }
+
+    public List<CategoryDto> getCategories() {
+        return categories;
+    }
+
+    // setters omitted for brevity but can be added as needed
 }
