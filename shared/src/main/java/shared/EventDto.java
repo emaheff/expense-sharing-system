@@ -9,6 +9,7 @@ public class EventDto {
     private double participationFee;
     private List<ParticipantDto> participants;
     private List<CategoryDto> categories;
+    private List<DebtDto> debts;
 
     public EventDto() {}
 
@@ -39,6 +40,14 @@ public class EventDto {
 
     public List<CategoryDto> getCategories() {
         return categories;
+    }
+
+    public void setDebts(List<DebtDto> debts) {
+        this.debts = debts;
+    }
+
+    public List<DebtDto> getDebts() {
+        return debts;
     }
 
     // setters omitted for brevity but can be added as needed

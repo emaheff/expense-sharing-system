@@ -2,6 +2,7 @@ package ui.client;
 
 import shared.CategoryDto;
 import shared.EventDto;
+import shared.EventSummaryDto;
 import shared.ParticipantDto;
 
 import java.time.DateTimeException;
@@ -13,6 +14,7 @@ import java.util.List;
 public class UserInterface {
 
     private boolean isRunning = true;
+    private int currentEventId = -1;
 
     public void start() {
         while (isRunning) {
@@ -25,9 +27,8 @@ public class UserInterface {
     private void handleMainMenuChoice(int choice) {
         switch (choice) {
             case 1 -> createEvent();
-//            case 2 -> loadEventFlow();
-//            case 3 -> saveCurrentEvent();
-//            case 4 -> showResultsForCurrentEvent();
+            case 2 -> loadEventFlow();
+            case 3 -> showResultsForCurrentEvent();
 //            case 5 -> handleEditEvent();
 //            case 6 -> deleteEvent();
 //            case 7 -> exportExcel();
@@ -52,10 +53,58 @@ public class UserInterface {
         ParticipantInteractionHandler.setParticipantsExpenses(eventCategories, eventParticipants);
         EventDto newEvent = new EventDto(name, date, fee, eventParticipants, eventCategories);
 
-        new EventApiClient().sendEvent(newEvent);
+        int createdId = EventApiClient.sendEvent(newEvent);
+        if (createdId > 0) {
+            this.currentEventId = createdId;
+            System.out.println("Event created and saved with ID " + createdId);
+        } else {
+            System.out.println("Failed to create event.");
+        }
+    }
 
+    private void loadEventFlow() {
+        List<EventSummaryDto> summaries = EventApiClient.fetchEventSummaries();
 
-        // send POST request to server to create a new Event with these variables (name, date, participation fee, categories and participants)
+        if (summaries.isEmpty()) {
+            System.out.println("No events found.");
+            return;
+        }
+
+        System.out.println("Choose an event to load:");
+        for (int i = 0; i < summaries.size(); i++) {
+            System.out.printf("%d. %s%n", i + 1, summaries.get(i));
+        }
+
+        System.out.print("Enter number of event: ");
+        int choice = UserInputHandler.getIntInput("Your choice: ");
+
+        if (choice < 1 || choice > summaries.size()) {
+            System.out.println("Invalid choice.");
+            return;
+        }
+
+        this.currentEventId = summaries.get(choice - 1).getId();
+    }
+
+    private void showResultsForCurrentEvent() {
+        if (currentEventId <= -1) {
+            System.out.println("No active event selected.");
+            return;
+        }
+
+        EventDto eventDto = EventApiClient.fetchEventResultsById(currentEventId);
+        if (eventDto == null) {
+            System.out.println("Failed to fetch results for event #" + currentEventId);
+            return;
+        }
+
+        System.out.println("=== Event Results: " + eventDto.getName() + " ===");
+        System.out.println("Participation Fee: " + eventDto.getParticipationFee());
+        System.out.println();
+
+        System.out.print(EventPresenter.formatParticipants(eventDto));
+        System.out.println(EventPresenter.formatDebts(eventDto.getDebts()));
+        System.out.println("=============================");
     }
 
     private List<CategoryDto> getCategoriesFromUser() {

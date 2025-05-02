@@ -14,12 +14,11 @@ public class MenuPrinter {
         System.out.println("Please choose an option:");
         System.out.println("1. Create new event");
         System.out.println("2. Load existing event");
-        System.out.println("3. Save current event");
-        System.out.println("4. Show event results");
-        System.out.println("5. Edit current event");
-        System.out.println("6. Delete current event");
-        System.out.println("7. Export excel file of current event");
-        System.out.println("8. Exit");
+        System.out.println("3. Show event results");
+        System.out.println("4. Edit current event");
+        System.out.println("5. Delete current event");
+        System.out.println("6. Export excel file of current event");
+        System.out.println("7. Exit");
     }
 
     /**

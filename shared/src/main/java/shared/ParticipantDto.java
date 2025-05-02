@@ -10,6 +10,8 @@ public class ParticipantDto {
     private String phone;
     private List<CategoryDto> consumedCategories;
     private Map<CategoryDto, Double> expenses;
+    private double totalExpense;
+    private double totalConsumed;
 
     public ParticipantDto() {}  // required for deserialization
 
@@ -50,5 +52,21 @@ public class ParticipantDto {
 
     public void addExpense(CategoryDto category, double amount) {
         expenses.put(category, amount);
+    }
+
+    public double getTotalExpense() {
+        return totalExpense;
+    }
+
+    public void setTotalExpense(double totalExpense) {
+        this.totalExpense = totalExpense;
+    }
+
+    public double getTotalConsumed() {
+        return totalConsumed;
+    }
+
+    public void setTotalConsumed(double totalConsumed) {
+        this.totalConsumed = totalConsumed;
     }
 }

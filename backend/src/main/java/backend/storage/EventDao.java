@@ -75,7 +75,8 @@ public class EventDao {
             while (rs.next()) {
                 int id = rs.getInt("id");
                 String name = rs.getString("name");
-                events.add(new EventSummary(id, name));
+                LocalDate date = rs.getDate("date").toLocalDate();
+                events.add(new EventSummary(id, name, date));
             }
 
         } catch (SQLException e) {
@@ -149,10 +150,12 @@ public class EventDao {
     public static class EventSummary {
         private final int id;
         private final String name;
+        private final LocalDate date;
 
-        public EventSummary(int id, String name) {
+        public EventSummary(int id, String name, LocalDate date) {
             this.id = id;
             this.name = name;
+            this.date = date;
         }
 
         public int getId() {
@@ -162,6 +165,8 @@ public class EventDao {
         public String getName() {
             return name;
         }
+
+        public LocalDate getDate() { return date;}
 
         @Override
         public String toString() {
