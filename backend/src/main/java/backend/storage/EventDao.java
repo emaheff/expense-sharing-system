@@ -66,7 +66,7 @@ public class EventDao {
      */
     public static List<EventSummary> getAllEvents() {
         List<EventSummary> events = new ArrayList<>();
-        String sql = "SELECT id, name FROM events ORDER BY date DESC";
+        String sql = "SELECT id, name, date FROM events ORDER BY date DESC";
 
         try (Connection conn = DatabaseManager.getConnection();
              PreparedStatement stmt = conn.prepareStatement(sql);

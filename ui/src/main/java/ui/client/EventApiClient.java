@@ -96,7 +96,15 @@ public class EventApiClient {
             conn.setRequestMethod("GET");
 
             try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-                return gson.fromJson(in, EventDto.class);
+                String line;
+                StringBuilder responseText = new StringBuilder();
+                while ((line = in.readLine()) != null) {
+                    responseText.append(line);
+                }
+
+                String fullJson = responseText.toString();
+                System.out.println("DEBUG: server response = " + fullJson);
+                return gson.fromJson(fullJson, EventDto.class);
             }
         } catch (Exception e) {
             System.err.println("Failed to fetch event results: " + e.getMessage());

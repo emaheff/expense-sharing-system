@@ -46,6 +46,7 @@ public class ParticipantDao {
 
             // participant does not exist in participants table - insert it.
             try (PreparedStatement insertStmt = conn.prepareStatement(insertSql, Statement.RETURN_GENERATED_KEYS)) {
+                System.out.println("Saving participant: " + participant.getName() + ", phone:" + participant.getPhoneNumber());
                 insertStmt.setString(1, participant.getName());
                 insertStmt.setString(2, participant.getPhoneNumber());
                 insertStmt.setString(3, participant.getEmail()); // can be null

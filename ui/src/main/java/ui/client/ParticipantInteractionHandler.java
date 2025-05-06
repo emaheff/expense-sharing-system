@@ -76,7 +76,7 @@ public class ParticipantInteractionHandler {
                     break;
                 } else {
                     ParticipantDto participant = getParticipantFromNumber(participantNumber, participantsToDisplay);
-                    participant.addConsumedCategory(category);
+                    participant.addConsumedCategory(category.getName());
                     participantsToDisplay.remove(participant);
                 }
             }
@@ -97,7 +97,7 @@ public class ParticipantInteractionHandler {
                     ParticipantDto participant = getParticipantFromNumber(participantNumber, participantsToDisplay);
                     double amount = UserInputHandler.getDoubleInput("Enter the amount of money that " + participant.getName() +
                             " spent on " + category.getName());
-                    participant.addExpense(category, amount);
+                    participant.addExpense(category.getName(), amount);
                     participantsToDisplay.remove(participant);
                 }
             }

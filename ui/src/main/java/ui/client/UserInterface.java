@@ -49,7 +49,7 @@ public class UserInterface {
 
         List<CategoryDto> eventCategories = getCategoriesFromUser();
         List<ParticipantDto> eventParticipants = ParticipantInteractionHandler.getParticipantsFromUser();
-        ParticipantInteractionHandler.setConsumers (eventCategories, eventParticipants);
+        ParticipantInteractionHandler.setConsumers(eventCategories, eventParticipants);
         ParticipantInteractionHandler.setParticipantsExpenses(eventCategories, eventParticipants);
         EventDto newEvent = new EventDto(name, date, fee, eventParticipants, eventCategories);
 

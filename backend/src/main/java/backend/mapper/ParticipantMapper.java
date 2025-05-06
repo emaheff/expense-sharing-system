@@ -13,17 +13,16 @@ public class ParticipantMapper {
     public static Participant toParticipant(ParticipantDto dto, List<Category> allCategories) {
         Participant participant = new Participant(dto.getName());
 
-        for (CategoryDto consumed : dto.getConsumedCategories()) {
-            String categoryName = consumed.getName();
+        for (String consumed : dto.getConsumedCategories()) {
 
             allCategories.stream()
-                    .filter(c -> c.getName().equals(categoryName))
+                    .filter(c -> c.getName().equals(consumed))
                     .findFirst()
                     .ifPresent(participant::addConsumedCategory);
         }
 
-        for (Map.Entry<CategoryDto, Double> entry : dto.getExpenses().entrySet()) {
-            String categoryName = entry.getKey().getName();
+        for (Map.Entry<String, Double> entry : dto.getExpenses().entrySet()) {
+            String categoryName = entry.getKey();
             Double amount = entry.getValue();
 
             allCategories.stream()

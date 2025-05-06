@@ -41,14 +41,14 @@ public class EventPresenter {
         for (ParticipantDto participant : event.getParticipants()) {
             result.append(participant.getName()).append("\n\t- Expenses:\n\t\t");
 
-            for (Map.Entry<CategoryDto, Double> entry : participant.getExpenses().entrySet()) {
-                result.append(entry.getKey().getName()).append(": ")
+            for (Map.Entry<String, Double> entry : participant.getExpenses().entrySet()) {
+                result.append(entry.getKey()).append(": ")
                         .append(entry.getValue()).append(", ");
             }
 
             result.append("\n\t- Consumed:\n\t\t");
-            for (CategoryDto consumedCategory : participant.getConsumedCategories()) {
-                result.append(consumedCategory.getName()).append(", ");
+            for (String consumedCategory : participant.getConsumedCategories()) {
+                result.append(consumedCategory).append(", ");
             }
 
             result.append("\n\t- Total Paid: ").append(participant.getTotalExpense());

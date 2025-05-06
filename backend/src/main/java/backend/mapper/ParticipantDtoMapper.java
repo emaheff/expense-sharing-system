@@ -6,7 +6,6 @@ import shared.ParticipantDto;
 import shared.CategoryDto;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ParticipantDtoMapper {
 
@@ -14,15 +13,15 @@ public class ParticipantDtoMapper {
         ParticipantDto dto = new ParticipantDto(participant.getName(), participant.getPhoneNumber());
 
 
-        List<CategoryDto> consumedDtos = participant.getConsumedCategories().stream()
-                .map(c -> new CategoryDto(c.getName()))
-                .collect(Collectors.toList());
+        List<String> consumedDtos = new ArrayList<>();
+        for (Category category : participant.getConsumedCategories()) {
+            consumedDtos.add(category.getName());
+        }
         dto.setConsumedCategories(consumedDtos);
 
-
-        Map<CategoryDto, Double> expenseMap = new HashMap<>();
+        Map<String, Double> expenseMap = new HashMap<>();
         for (Map.Entry<Category, Double> entry : participant.getExpenses().entrySet()) {
-            CategoryDto dtoKey = new CategoryDto(entry.getKey().getName());
+            String dtoKey = entry.getKey().getName();
             expenseMap.put(dtoKey, entry.getValue());
         }
         dto.setExpenses(expenseMap);

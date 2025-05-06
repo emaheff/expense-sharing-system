@@ -8,8 +8,8 @@ import java.util.Map;
 public class ParticipantDto {
     private String name;
     private String phone;
-    private List<CategoryDto> consumedCategories;
-    private Map<CategoryDto, Double> expenses;
+    private List<String> consumedCategories;
+    private Map<String, Double> expenses;
     private double totalExpense;
     private double totalConsumed;
 
@@ -22,11 +22,11 @@ public class ParticipantDto {
         expenses = new HashMap<>();
     }
 
-    public void setConsumedCategories(List<CategoryDto> consumedCategories) {
+    public void setConsumedCategories(List<String> consumedCategories) {
         this.consumedCategories = consumedCategories;
     }
 
-    public void setExpenses(Map<CategoryDto, Double> expenses) {
+    public void setExpenses(Map<String, Double> expenses) {
         this.expenses = expenses;
     }
 
@@ -38,20 +38,28 @@ public class ParticipantDto {
         this.name = name;
     }
 
-    public List<CategoryDto> getConsumedCategories() {
+    public List<String> getConsumedCategories() {
         return consumedCategories;
     }
 
-    public Map<CategoryDto, Double> getExpenses() {
+    public Map<String, Double> getExpenses() {
         return expenses;
     }
 
-    public void addConsumedCategory(CategoryDto category) {
+    public void addConsumedCategory(String category) {
         consumedCategories.add(category);
     }
 
-    public void addExpense(CategoryDto category, double amount) {
+    public void addExpense(String category, double amount) {
         expenses.put(category, amount);
+    }
+
+    public String getPhone() {
+        return phone;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public double getTotalExpense() {
@@ -68,5 +76,10 @@ public class ParticipantDto {
 
     public void setTotalConsumed(double totalConsumed) {
         this.totalConsumed = totalConsumed;
+    }
+
+    @Override
+    public String toString() {
+        return "Participant name: " + name + ". Phone number: " + phone;
     }
 }
