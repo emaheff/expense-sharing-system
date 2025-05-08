@@ -4,6 +4,7 @@ import java.util.Objects;
 
 public class CategoryDto {
     private String name;
+    private int id;
 
     public CategoryDto() {}
 
@@ -17,6 +18,14 @@ public class CategoryDto {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

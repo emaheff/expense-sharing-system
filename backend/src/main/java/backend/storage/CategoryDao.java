@@ -21,7 +21,7 @@ public class CategoryDao {
      * @param category the category to find or insert
      * @return the category ID in the database, or -1 if an error occurred
      */
-    private static int getOrCreateCategory(Category category) {
+    public static int getOrCreateCategory(Category category) {
         if (category.getName() == null || category.getName().isBlank()) {
             throw new IllegalArgumentException("Category name cannot be null or empty");
         }
@@ -83,7 +83,7 @@ public class CategoryDao {
      * @param categoryId the ID of the category
      * @param eventId the ID of the event
      */
-    private static void linkCategoryToEvent(int categoryId, int eventId) {
+    public static void linkCategoryToEvent(int categoryId, int eventId) {
         String sql = "INSERT INTO event_categories (event_id, category_id) VALUES (?, ?) ON CONFLICT DO NOTHING";
 
         try (Connection conn = DatabaseManager.getConnection();

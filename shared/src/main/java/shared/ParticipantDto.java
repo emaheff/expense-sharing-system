@@ -12,6 +12,7 @@ public class ParticipantDto {
     private Map<String, Double> expenses;
     private double totalExpense;
     private double totalConsumed;
+    private int id;
 
     public ParticipantDto() {}  // required for deserialization
 
@@ -76,6 +77,14 @@ public class ParticipantDto {
 
     public void setTotalConsumed(double totalConsumed) {
         this.totalConsumed = totalConsumed;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     @Override

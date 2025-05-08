@@ -29,10 +29,10 @@ public class UserInterface {
             case 1 -> createEvent();
             case 2 -> loadEventFlow();
             case 3 -> showResultsForCurrentEvent();
-//            case 5 -> handleEditEvent();
-//            case 6 -> deleteEvent();
-//            case 7 -> exportExcel();
-            case 8 -> {
+            case 4 -> handleEditEvent();
+//            case 5 -> deleteEvent();
+//            case 6 -> exportExcel();
+            case 7 -> {
                 System.out.println("Exiting. Goodbye!");
                 isRunning = false;
             }
@@ -107,6 +107,133 @@ public class UserInterface {
         System.out.println("=============================");
     }
 
+    private void handleEditEvent() {
+        MenuPrinter.displayEditMenu();
+        int choice = UserInputHandler.getIntInput("Your choice: ");
+        handleEditEventChoice(choice);
+    }
+
+    private void handleEditEventChoice(int choice) {
+        switch (choice) {
+            case 1 -> renameEvent();
+            case 2 -> editEventDate();
+            case 3 -> editParticipationFee();
+            case 4 -> {
+                handleManageCategories();
+                handleEditEvent();
+            }
+        }
+    }
+
+    private void renameEvent() {
+        if (currentEventId == 0) {
+            System.out.println("No event selected to edit.");
+            return;
+        }
+        String newEventName = UserInputHandler.getStringInput("Enter a new name for this event: ");
+        int result = EventApiClient.changeEventName(currentEventId, newEventName);
+        if (result > 0) {
+            System.out.println("Event name updated successfully.");
+        } else {
+            System.out.println("Failed to update event name");
+        }
+    }
+
+    private void editEventDate() {
+        if (currentEventId == 0) {
+            System.out.println("No event selected to edit.");
+            return;
+        }
+        String stringDate = UserInputHandler.getStringInput("Enter date (dd/MM/yyyy): ");
+        validateDate(stringDate);
+        int result = EventApiClient.changeEventDate(currentEventId, stringDate);
+        if (result > 0) {
+            System.out.println("Event date updated successfully.");
+        } else {
+            System.out.println("Failed to update event date");
+        }
+    }
+
+    private void editParticipationFee() {
+        if (currentEventId == 0) {
+            System.out.println("No event selected to edit.");
+            return;
+        }
+        double participationFee = UserInputHandler.getDoubleInput("Enter participation fee: ");
+        int result = EventApiClient.changeParticipationFee(currentEventId, participationFee);
+        if (result > 0) {
+            System.out.println("Event date updated successfully.");
+        } else {
+            System.out.println("Failed to update event date");
+        }
+    }
+
+    private void handleManageCategories() {
+        MenuPrinter.displayManageCategoryMenu();
+        int choice = UserInputHandler.getIntInput("Your choice: ");
+        handleManageCategoryChoice(choice);
+    }
+
+    private void handleManageCategoryChoice(int choice) {
+        switch (choice) {
+            case 1 -> handleAddNewCategory();
+            case 2 -> handleRenameCategory();
+        }
+    }
+
+    private void handleAddNewCategory() {
+        if (currentEventId == 0) {
+            System.out.println("No event selected to edit.");
+            return;
+        }
+        String newCategoryName = UserInputHandler.getStringInput("Enter a new category that you want to add: ");
+        CategoryDto newCategory = new CategoryDto(newCategoryName);
+        addNewCategoryToParticipants(newCategory);
+
+    }
+
+    private void addNewCategoryToParticipants(CategoryDto newCategory) {
+        // get list of participants from the server of this current event.
+        // for each participant add the category to consumed category if the participant consumed it
+        // in addition - ask the participant if he spent money on this category and how much.
+        List<ParticipantDto> participants = EventApiClient.fetchParticipantsEvent(currentEventId);
+
+        for (ParticipantDto participant: participants) {
+            if (UserInputHandler.getYesNoInput(String.format("Did %s spent money on %s?", participant.getName(), newCategory.getName()))) {
+                double expense = UserInputHandler.getDoubleInput(String.format("Enter the amount of money that %s spent on %s:%n", participant.getName(), newCategory.getName()));
+                participant.getExpenses().put(newCategory.getName(), expense);
+            }
+            if (UserInputHandler.getYesNoInput(String.format("Did %s consumed from %s category?", participant.getName(), newCategory.getName()))) {
+                participant.addConsumedCategory(newCategory.getName());
+            }
+        }
+
+        // send the updated participant list to the server to update this current event.
+        EventApiClient.setParticipants(participants, currentEventId);
+    }
+
+    /**
+     * Renames a category by asking the user for a new name.
+     */
+    private static void handleRenameCategory() {
+        // 1. get a list of categories of this current event from user. including category id.
+        // 2. display the list to the user and ask the user to choose the category to rename.
+        // 3. send to the server the category id to rename and string with new name to the category
+
+    }
+
+    private void validateDate(String newDate) {
+        LocalDate date = null;
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        while (date == null) {
+            try {
+                date = LocalDate.parse(newDate, formatter);
+            } catch (DateTimeException e) {
+                System.out.println("Invalid date. Please use format dd/MM/yyyy and enter a real date.");
+            }
+        }
+    }
+
     private List<CategoryDto> getCategoriesFromUser() {
         List<CategoryDto> eventCategories = new ArrayList<>();
         boolean isMoreCategory = true;
@@ -122,8 +249,6 @@ public class UserInterface {
         }
         return eventCategories;
     }
-
-
 
     private LocalDate localDateFromString(String stringDate) {
         LocalDate date = null;

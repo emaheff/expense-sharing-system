@@ -11,6 +11,7 @@ public class ParticipantDtoMapper {
 
     public static ParticipantDto fromParticipant(Participant participant, List<CategoryDto> categoryDtos) {
         ParticipantDto dto = new ParticipantDto(participant.getName(), participant.getPhoneNumber());
+        dto.setId(participant.getId());
 
 
         List<String> consumedDtos = new ArrayList<>();

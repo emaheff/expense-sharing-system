@@ -1,13 +1,18 @@
 package backend.storage;
 
+import backend.logic.Category;
 import backend.logic.Event;
 import backend.logic.Participant;
+import shared.CategoryDto;
+import shared.ParticipantDto;
 
 import java.sql.*;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * EventDao handles database interactions related to Event objects,
@@ -85,6 +90,172 @@ public class EventDao {
 
         return events;
     }
+
+    public static List<ParticipantDto> getParticipants(int eventId) {
+        List<ParticipantDto> participants = new ArrayList<>();
+
+        String participantSql = """
+        SELECT p.id, p.name, p.phone
+        FROM participants p
+        JOIN event_participants ep ON p.id = ep.participant_id
+        WHERE ep.event_id = ?
+    """;
+
+        String consumptionSql = """
+        SELECT c.name
+        FROM consumptions cs
+        JOIN categories c ON cs.category_id = c.id
+        WHERE cs.event_id = ? AND cs.participant_id = ?
+    """;
+
+        String expenseSql = """
+        SELECT c.name, e.amount
+        FROM expenses e
+        JOIN categories c ON e.category_id = c.id
+        WHERE e.event_id = ? AND e.participant_id = ?
+    """;
+
+        try (Connection conn = DatabaseManager.getConnection();
+             PreparedStatement participantStmt = conn.prepareStatement(participantSql)) {
+
+            participantStmt.setInt(1, eventId);
+            ResultSet rs = participantStmt.executeQuery();
+
+            while (rs.next()) {
+                int participantId = rs.getInt("id");
+                String name = rs.getString("name");
+                String phone = rs.getString("phone");
+
+                ParticipantDto dto = new ParticipantDto(name, phone);
+                dto.setId(participantId);
+
+                // Load consumed categories
+                try (PreparedStatement csStmt = conn.prepareStatement(consumptionSql)) {
+                    csStmt.setInt(1, eventId);
+                    csStmt.setInt(2, participantId);
+                    ResultSet csRs = csStmt.executeQuery();
+
+                    List<String> consumed = new ArrayList<>();
+                    while (csRs.next()) {
+                        consumed.add(csRs.getString("name"));
+                    }
+                    dto.setConsumedCategories(consumed);
+
+                }
+
+                // Load expenses
+                try (PreparedStatement exStmt = conn.prepareStatement(expenseSql)) {
+                    exStmt.setInt(1, eventId);
+                    exStmt.setInt(2, participantId);
+                    ResultSet exRs = exStmt.executeQuery();
+
+                    Map<String, Double> expenses = new HashMap<>();
+                    while (exRs.next()) {
+                        expenses.put(exRs.getString("name"), exRs.getDouble("amount"));
+                    }
+                    dto.setExpenses(expenses);
+                }
+
+                participants.add(dto);
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Failed to load participants for event " + eventId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+
+        return participants;
+    }
+
+    public static void updateParticipantsForEvent(int eventId, List<ParticipantDto> participants) {
+        try (Connection conn = DatabaseManager.getConnection()) {
+            for (ParticipantDto dto : participants) {
+
+
+                int participantId = dto.getId();
+
+
+                deleteParticipantDataForEvent(conn, eventId, participantId);
+
+
+                if (dto.getExpenses() != null) {
+                    for (Map.Entry<String, Double> entry : dto.getExpenses().entrySet()) {
+                        String categoryName = entry.getKey();
+                        double amount = entry.getValue();
+
+                        Category category = new Category(categoryName);
+                        int categoryId = CategoryDao.getOrCreateCategory(category);
+                        CategoryDao.linkCategoryToEvent(categoryId, eventId);
+                        insertExpense(conn, eventId, participantId, categoryId, amount);
+                    }
+                }
+
+                if (dto.getConsumedCategories() != null) {
+                    for (String categoryName : dto.getConsumedCategories()) {
+                        Category category = new Category(categoryName);
+                        int categoryId = CategoryDao.getOrCreateCategory(category);
+                        CategoryDao.linkCategoryToEvent(categoryId, eventId);
+                        insertConsumption(conn, eventId, participantId, categoryId);
+                    }
+                }
+            }
+
+        } catch (SQLException e) {
+            System.err.println("Failed to update participants for event " + eventId + ": " + e.getMessage());
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static void insertExpense(Connection conn, int eventId, int participantId, int categoryId, double amount) throws SQLException {
+        String sql = """
+        INSERT INTO expenses (category_id, event_id, participant_id, amount)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT (category_id, event_id, participant_id)
+        DO UPDATE SET amount = EXCLUDED.amount
+    """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, categoryId);
+            stmt.setInt(2, eventId);
+            stmt.setInt(3, participantId);
+            stmt.setDouble(4, amount);
+            stmt.executeUpdate();
+        }
+    }
+
+    private static void insertConsumption(Connection conn, int eventId, int participantId, int categoryId) throws SQLException {
+        String sql = """
+        INSERT INTO consumptions (category_id, event_id, participant_id)
+        VALUES (?, ?, ?)
+        ON CONFLICT (category_id, event_id, participant_id) DO NOTHING
+    """;
+
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+            stmt.setInt(1, categoryId);
+            stmt.setInt(2, eventId);
+            stmt.setInt(3, participantId);
+            stmt.executeUpdate();
+        }
+    }
+
+
+    private static void deleteParticipantDataForEvent(Connection conn, int eventId, int participantId) throws SQLException {
+        try (PreparedStatement stmt1 = conn.prepareStatement("DELETE FROM expenses WHERE event_id = ? AND participant_id = ?");
+             PreparedStatement stmt2 = conn.prepareStatement("DELETE FROM consumptions WHERE event_id = ? AND participant_id = ?")) {
+
+            stmt1.setInt(1, eventId);
+            stmt1.setInt(2, participantId);
+            stmt1.executeUpdate();
+
+            stmt2.setInt(1, eventId);
+            stmt2.setInt(2, participantId);
+            stmt2.executeUpdate();
+        }
+    }
+
+
+
+
 
     /**
      * Loads a full Event object by its ID, including its participants, categories, and debts.
