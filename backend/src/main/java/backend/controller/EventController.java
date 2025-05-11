@@ -8,6 +8,7 @@ import backend.storage.*;
 import org.apache.xmlbeans.impl.xb.xsdschema.Public;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.ResponseEntity;
+import shared.CategoryDto;
 import shared.EventSummaryDto;
 import shared.ParticipantDto;
 import shared.EventDto;
@@ -17,6 +18,7 @@ import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -152,6 +154,12 @@ public class EventController {
         return ResponseEntity.ok(participantsDto);
     }
 
+    @GetMapping("/{id}/categories")
+    public ResponseEntity<List<CategoryDto>> getCategories(@PathVariable int id) {
+        List<CategoryDto> categoriesDto = EventDao.getCategories(id);
+        return ResponseEntity.ok(categoriesDto);
+    }
+
     @PutMapping("/{id}/participants")
     public ResponseEntity<String> updateParticipants(@PathVariable int id, @RequestBody List<ParticipantDto> participantsDto) {
         try {
@@ -162,6 +170,22 @@ public class EventController {
             return ResponseEntity.status(500).body("Failed to update participants for event " + id);
         }
     }
+
+    @PutMapping("/categoryRename")
+    public ResponseEntity<String> renameCategory(@RequestBody Map<String, Object> request) {
+        try {
+            int categoryId = ((Number) request.get("categoryId")).intValue();
+            String newName = (String) request.get("newName");
+            int eventId = ((Number) request.get("eventId")).intValue();
+
+            CategoryDao.renameCategoryForEvent(categoryId, newName, eventId);
+            return ResponseEntity.ok("Category renamed successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(500).body("Failed to rename category: " + e.getMessage());
+        }
+    }
+
 
 
 }

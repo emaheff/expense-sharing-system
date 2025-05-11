@@ -1,6 +1,7 @@
 package ui.client;
 
 import com.google.gson.*;
+import shared.CategoryDto;
 import shared.EventDto;
 
 import java.io.BufferedReader;
@@ -11,7 +12,9 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import shared.EventSummaryDto;
 import shared.ParticipantDto;
@@ -88,6 +91,22 @@ public class EventApiClient {
         } catch (Exception e) {
             System.err.println("Failed to fetch participants " + e.getMessage());
             return List.of(); // empty list in case of error
+        }
+    }
+
+    public static List<CategoryDto> fetchCategoriesEvent(int eventId) {
+        try {
+            URL url = new URL(BASE_URL + "/" + eventId + "/categories");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+
+            try (BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                CategoryDto[] response = gson.fromJson(in, CategoryDto[].class);
+                return Arrays.asList(response);
+            }
+        } catch (Exception e) {
+            System.err.println("Failed to fetch categories " + e.getMessage());
+            return List.of();
         }
     }
 
@@ -246,6 +265,38 @@ public class EventApiClient {
             System.err.println("Failed to change event name: " + e.getMessage());
         }
         return -1;
+    }
+
+    public static void changeCategoryName(int categoryId, String newName, int eventId) {
+        try {
+            URL url = new URL(BASE_URL + "/categoryRename");
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("PUT");
+            conn.setRequestProperty("Content-Type", "application/json");
+            conn.setDoOutput(true);
+
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("categoryId", categoryId);
+            requestBody.put("newName", newName);
+            requestBody.put("eventId", eventId);
+
+            String json = new Gson().toJson(requestBody);
+
+            try (OutputStream os = conn.getOutputStream()) {
+                os.write(json.getBytes());
+                os.flush();
+            }
+
+            int responseCode = conn.getResponseCode();
+            if (responseCode == 200) {
+                System.out.println("Category name updated successfully.");
+            } else {
+                System.err.println("Server responded with code: " + responseCode);
+            }
+
+        } catch (Exception e) {
+            System.err.println("Failed to change category name: " + e.getMessage());
+        }
     }
 
 }

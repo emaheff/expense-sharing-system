@@ -215,10 +215,31 @@ public class UserInterface {
     /**
      * Renames a category by asking the user for a new name.
      */
-    private static void handleRenameCategory() {
+    private void handleRenameCategory() {
         // 1. get a list of categories of this current event from user. including category id.
+        List<CategoryDto> eventCategories = EventApiClient.fetchCategoriesEvent(currentEventId);
         // 2. display the list to the user and ask the user to choose the category to rename.
+        List<CategoryDto> categoriesDisplay = new ArrayList<>(eventCategories);
+        System.out.println("Enter the category number you want to rename");
+        System.out.println(MenuPrinter.displayNumberedCategories(categoriesDisplay));
+        int choice = UserInputHandler.getIntInput("Your choice: ");
+        boolean validInput = false;
+
+        while (!validInput) {
+            if (choice == 0) {
+                return;
+            }
+            if (choice >= 1 && choice <= categoriesDisplay.size()) {
+                validInput = true;
+            } else {
+                System.out.println("Please enter a number between 1 and " + categoriesDisplay.size() + ", or 0 to skip.");
+            }
+        }
+        int categoryIdToRename = categoriesDisplay.get(choice - 1).getId();
         // 3. send to the server the category id to rename and string with new name to the category
+        String newName = UserInputHandler.getStringInput("Enter the a new name to " + categoriesDisplay.get(choice - 1).getName());
+
+        EventApiClient.changeCategoryName(categoryIdToRename, newName, currentEventId);
 
     }
 

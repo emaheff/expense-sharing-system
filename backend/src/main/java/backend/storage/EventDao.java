@@ -91,6 +91,35 @@ public class EventDao {
         return events;
     }
 
+    public static List<CategoryDto> getCategories(int eventId) {
+        List<CategoryDto> categories = new ArrayList<>();
+        String categoriesSql = """
+                SELECT c.id, c.name
+                FROM categories c
+                JOIN event_categories ec ON c.id = ec.category_id
+                WHERE ec.event_id = ?
+                """;
+        try (Connection conn = DatabaseManager.getConnection();
+        PreparedStatement categoryStmt = conn.prepareStatement(categoriesSql)) {
+            categoryStmt.setInt(1, eventId);
+            ResultSet rs = categoryStmt.executeQuery();
+
+            while (rs.next()) {
+                int categoryId = rs.getInt("id");
+                String categoryName = rs.getString("name");
+
+                CategoryDto categoryDto = new CategoryDto(categoryName);
+                categoryDto.setId(categoryId);
+
+                categories.add(categoryDto);
+            }
+        } catch (SQLException e) {
+            System.err.println("Failed to load categories for event " + eventId + ": " + e.getMessage());
+            e.printStackTrace();
+        }
+        return categories;
+    }
+
     public static List<ParticipantDto> getParticipants(int eventId) {
         List<ParticipantDto> participants = new ArrayList<>();
 
@@ -99,7 +128,7 @@ public class EventDao {
         FROM participants p
         JOIN event_participants ep ON p.id = ep.participant_id
         WHERE ep.event_id = ?
-    """;
+        """;
 
         String consumptionSql = """
         SELECT c.name

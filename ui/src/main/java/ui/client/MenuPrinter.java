@@ -1,5 +1,6 @@
 package ui.client;
 
+import shared.CategoryDto;
 import shared.ParticipantDto;
 
 import java.util.List;
@@ -90,6 +91,15 @@ public class MenuPrinter {
 
         for (int i = 1; i <= participants.size(); i++) {
             result.append(i).append(". ").append(participants.get(i -1).getName()).append("\n");
+        }
+        return result.toString();
+    }
+
+    public static String displayNumberedCategories(List<CategoryDto> categories) {
+        StringBuilder result = new StringBuilder();
+
+        for (int i = 1; i <= categories.size(); i++) {
+            result.append(i).append(". ").append(categories.get(i - 1).getName()).append("\n");
         }
         return result.toString();
     }
