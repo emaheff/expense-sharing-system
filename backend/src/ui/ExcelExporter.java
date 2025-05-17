@@ -37,7 +37,7 @@ public class ExcelExporter {
         for (Participant participant : event.getParticipants()) {
             for (Category category: participant.getExpenses().keySet()) {
                 String categoryName = category.getName();
-                double amount = participant.getExpenses().get(category);
+                double amount = participant.getExpenses().getOrDefault(category, 0.0);
 
                 Row row = expensesSheet.createRow(rowIndex++);
                 row.createCell(0).setCellValue(amount);
